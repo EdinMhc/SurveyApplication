@@ -11,8 +11,8 @@
         public ContextClass(DbContextOptions options)
             : base(options)
         {
-            //this.Database.EnsureDeleted();
-            //this.Database.EnsureCreated();
+            this.Database.EnsureDeleted();
+            this.Database.EnsureCreated();
         }
 
         public DbSet<Company> Company { get; set; }
@@ -60,18 +60,19 @@
         }
 
         // Using a List of users to seed a object to Company, at the same time info for SeedUser.
-        private List<User> UsersToSeed = new List<User> {
-        new User
+        private List<User> UsersToSeed = new List<User>
+        {
+            new User
                 {
                     Id = Guid.NewGuid().ToString(),
-                    UserName = "edin.muhic@forsta.com",
+                    UserName = "edinmuhic00@gmail.com",
                     FirstName = "Edin",
                     LastName = "Muhic",
                     PasswordHash = "AQAAAAEAACcQAAAAEMF/jR4CGcZfNBTxLIe5QyaadJ5RFYRfZSh1I/1gfRjjTF9UPjhxDDa3+07E+tGzhQ==",
-                    Email = "edin.muhic@forsta.com",
-                    NormalizedUserName = "EDIN.MUHIC@FORSTA.COM",
-                    NormalizedEmail = "EDIN.MUHIC@FORSTA.COM",
-                },
+                    Email = "edinmuhic00@gmail.com",
+                    NormalizedUserName = "EDINMUHIC00@GMAIL.COM",
+                    NormalizedEmail = "EDINMUHIC00@GMAIL.COM",
+                }
         };
 
         private void SeedCompanies(ModelBuilder modelBuilder)

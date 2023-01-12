@@ -51,15 +51,15 @@ namespace Survey.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "93c4e845-0098-4fe5-a69d-0a9607a30e3b",
-                            ConcurrencyStamp = "7234d9e6-1349-43b8-b595-165ccdc5e434",
+                            Id = "cfbb4447-2bcd-4c17-820f-ed3a411ffadc",
+                            ConcurrencyStamp = "332d4db0-d72a-4a62-89f2-25380e7a9743",
                             Name = "SuperAdmin",
                             NormalizedName = "SuperAdmin"
                         },
                         new
                         {
-                            Id = "85096ac8-cad9-4758-b2bb-265dd56b4fad",
-                            ConcurrencyStamp = "022a7ff1-7451-4966-820b-06790a870275",
+                            Id = "a0124983-f40a-4577-a3fc-e9764b2f3417",
+                            ConcurrencyStamp = "57c9e353-dc83-406a-981f-9f9c5f175396",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         });
@@ -502,21 +502,21 @@ namespace Survey.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "50fb8acc-d45e-4585-a62f-6387e3ff16c3",
+                            Id = "8d646793-afcb-4056-b48a-9adc44381689",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "cadb3c5d-b769-40df-85d0-e9f82c5c5fe6",
-                            Email = "edin.muhic@forsta.com",
+                            ConcurrencyStamp = "04400168-714f-4661-b9d2-64273f03b569",
+                            Email = "edinmuhic00@gmail.com",
                             EmailConfirmed = false,
                             FirstName = "Edin",
                             LastName = "Muhic",
                             LockoutEnabled = false,
-                            NormalizedEmail = "EDIN.MUHIC@FORSTA.COM",
-                            NormalizedUserName = "EDIN.MUHIC@FORSTA.COM",
+                            NormalizedEmail = "EDINMUHIC00@GMAIL.COM",
+                            NormalizedUserName = "EDINMUHIC00@GMAIL.COM",
                             PasswordHash = "AQAAAAEAACcQAAAAEMF/jR4CGcZfNBTxLIe5QyaadJ5RFYRfZSh1I/1gfRjjTF9UPjhxDDa3+07E+tGzhQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "d280d766-7c6e-407d-bd5a-ee9048493bd2",
+                            SecurityStamp = "9497e336-c916-47b6-a7f6-63c0f10d81f1",
                             TwoFactorEnabled = false,
-                            UserName = "edin.muhic@forsta.com"
+                            UserName = "edinmuhic00@gmail.com"
                         });
                 });
 

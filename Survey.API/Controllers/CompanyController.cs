@@ -26,8 +26,6 @@
                 throw new ArgumentNullException(nameof(companyService));
         }
 
-        // .net 6 request lifecycle
-        // [Authorize2("Admin", "SuperAdmin")]
         [Authorize(Roles = "Admin, SuperAdmin", Policy = "IsAnonymousUser")]
         [HttpGet]
         public ActionResult<IEnumerable<CompanyBasicInfoDto>> GetAll()
@@ -40,6 +38,11 @@
             return this.Ok(this.mapper.Map<List<CompanyBasicInfoDto>>(companiesSuperAdmin));
         }
 
+        /// <summary>
+        /// Get company by companyId
+        /// </summary>
+        /// <param name="companyId"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Admin, SuperAdmin", Policy = "IsAnonymousUser")]
         [HttpGet("{companyId}")]
         public IActionResult Get(int companyId)
@@ -51,34 +54,47 @@
             return this.Ok(this.mapper.Map<CompanyBasicInfoDto>(company1));
         }
 
+        /// <summary>
+        /// Create company
+        /// </summary>
+        /// <param name="companyInfo"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Admin, SuperAdmin", Policy = "IsAnonymousUser")]
         [HttpPost]
         public async Task<IActionResult> PostAsync([FromBody] CompanyCreationDto companyInfo)
         {
             string userId = GeneralExtensions.GetUserId(this.HttpContext);
-            var mapped = this.mapper.Map<Survey.Infrastructure.Entities.Company>(companyInfo);
+            var mapped = this.mapper.Map<Company>(companyInfo);
             string role = this.User.IsInRole(AdminHelper.Admin) ? AdminHelper.Admin : AdminHelper.SuperAdmin;
 
             var company = await this.companyService.CreateAsync(mapped, role, userId);
             return this.Ok(this.mapper.Map<CompanyBasicInfoDto>(company));
         }
 
-        // PUT: api/companies/5
-
+        /// <summary>
+        /// Update company information
+        /// </summary>
+        /// <param name="companyId"></param>
+        /// <param name="companyInfo"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Admin, SuperAdmin", Policy = "IsAnonymousUser")]
         [HttpPut("{companyId}")]
         public async Task<IActionResult> PutAsync(int companyId, [FromBody] CompanyCreationDto companyInfo)
         {
             string userId = GeneralExtensions.GetUserId(this.HttpContext);
 
-            var mapped = this.mapper.Map<Survey.Infrastructure.Entities.Company>(companyInfo);
+            var mapped = this.mapper.Map<Company>(companyInfo);
             string role = this.User.IsInRole(AdminHelper.Admin) ? AdminHelper.Admin : AdminHelper.SuperAdmin;
 
             var company1 = await this.companyService.UpdateAsync(mapped, role, companyId, userId);
             return this.Ok(this.mapper.Map<CompanyBasicInfoDto>(company1));
         }
 
-        // DELETE: api/companies/5
+        /// <summary>
+        /// Delete a company
+        /// </summary>
+        /// <param name="companyId"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Admin, SuperAdmin", Policy = "IsAnonymousUser")]
         [HttpDelete("{companyId}")]
         public async Task<IActionResult> Delete(int companyId)

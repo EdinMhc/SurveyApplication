@@ -12,7 +12,7 @@ using Survey.Infrastructure.ContextClass1;
 namespace Survey.Infrastructure.Migrations
 {
     [DbContext(typeof(ContextClass))]
-    [Migration("20220803080648_initialMigration")]
+    [Migration("20230111222637_initialMigration")]
     partial class initialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,15 +53,15 @@ namespace Survey.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "7b90eaac-c59a-4ae5-8b81-bca59e221ee0",
-                            ConcurrencyStamp = "395e12d0-609f-4e54-aceb-5434543287f6",
+                            Id = "cfbb4447-2bcd-4c17-820f-ed3a411ffadc",
+                            ConcurrencyStamp = "332d4db0-d72a-4a62-89f2-25380e7a9743",
                             Name = "SuperAdmin",
                             NormalizedName = "SuperAdmin"
                         },
                         new
                         {
-                            Id = "4d327389-6835-47ad-a7ef-fd8f5ae55899",
-                            ConcurrencyStamp = "ef05a6a5-1434-4a7a-9ff3-34e639ae5610",
+                            Id = "a0124983-f40a-4577-a3fc-e9764b2f3417",
+                            ConcurrencyStamp = "57c9e353-dc83-406a-981f-9f9c5f175396",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         });
@@ -177,7 +177,8 @@ namespace Survey.Infrastructure.Migrations
                 {
                     b.Property<int>("AnwserID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("AnwserID");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AnwserID"), 1L, 1);
 
@@ -187,7 +188,7 @@ namespace Survey.Infrastructure.Migrations
                     b.Property<string>("AnwserText")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("AnwserID");
 
@@ -200,19 +201,20 @@ namespace Survey.Infrastructure.Migrations
                 {
                     b.Property<int>("AnwserBlockID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("AnwserBlockID");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AnwserBlockID"), 1L, 1);
 
                     b.Property<string>("AnwserBlockName")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("BlockType")
                         .IsRequired()
                         .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
+                        .HasColumnType("varchar(30)");
 
                     b.Property<int>("CodeOfAnwserBlock")
                         .HasColumnType("int");
@@ -232,34 +234,36 @@ namespace Survey.Infrastructure.Migrations
                 {
                     b.Property<int>("CompanyID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("CompanyID");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CompanyID"), 1L, 1);
 
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("CompanyName")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("varchar(255)");
 
-                    b.Property<string>("UserId")
+                    b.Property<string>("UserID")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("CompanyID");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserID");
 
                     b.ToTable("Company");
                 });
@@ -300,7 +304,8 @@ namespace Survey.Infrastructure.Migrations
                 {
                     b.Property<int>("QuestionID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("QuestionID");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("QuestionID"), 1L, 1);
 
@@ -309,19 +314,20 @@ namespace Survey.Infrastructure.Migrations
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("QuestionText")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("QuestionType")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
-                    b.Property<int>("SurveyID")
+                    b.Property<int?>("SurveyID")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.HasKey("QuestionID");
@@ -361,7 +367,8 @@ namespace Survey.Infrastructure.Migrations
                 {
                     b.Property<int>("RespondentID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("RespondentId");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RespondentID"), 1L, 1);
 
@@ -369,9 +376,10 @@ namespace Survey.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<int>("QuestionID")
+                        .HasMaxLength(100)
                         .HasColumnType("int");
 
                     b.Property<int>("SurveyReportID")
@@ -388,28 +396,31 @@ namespace Survey.Infrastructure.Migrations
                 {
                     b.Property<int>("SurveyID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("SurveyID");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SurveyID"), 1L, 1);
 
                     b.Property<int?>("CompanyID")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<bool>("IsActive")
+                        .HasMaxLength(255)
                         .HasColumnType("bit");
 
                     b.Property<string>("SurveyName")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("SurveyID");
 
@@ -493,21 +504,21 @@ namespace Survey.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "f310e9a0-3fb0-4253-89ba-5c4a9699385f",
+                            Id = "8d646793-afcb-4056-b48a-9adc44381689",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "d7a95497-c93f-4146-aa9a-ca7d75c4416e",
-                            Email = "edin.muhic@forsta.com",
+                            ConcurrencyStamp = "04400168-714f-4661-b9d2-64273f03b569",
+                            Email = "edinmuhic00@gmail.com",
                             EmailConfirmed = false,
                             FirstName = "Edin",
                             LastName = "Muhic",
                             LockoutEnabled = false,
-                            NormalizedEmail = "EDIN.MUHIC@FORSTA.COM",
-                            NormalizedUserName = "EDIN.MUHIC@FORSTA.COM",
+                            NormalizedEmail = "EDINMUHIC00@GMAIL.COM",
+                            NormalizedUserName = "EDINMUHIC00@GMAIL.COM",
                             PasswordHash = "AQAAAAEAACcQAAAAEMF/jR4CGcZfNBTxLIe5QyaadJ5RFYRfZSh1I/1gfRjjTF9UPjhxDDa3+07E+tGzhQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "1a0be691-1d74-4413-9b32-452879b3051e",
+                            SecurityStamp = "9497e336-c916-47b6-a7f6-63c0f10d81f1",
                             TwoFactorEnabled = false,
-                            UserName = "edin.muhic@forsta.com"
+                            UserName = "edinmuhic00@gmail.com"
                         });
                 });
 
@@ -576,7 +587,7 @@ namespace Survey.Infrastructure.Migrations
             modelBuilder.Entity("Survey.Infrastructure.Entities.AnwserBlock", b =>
                 {
                     b.HasOne("Survey.Infrastructure.Entities.Company", "Company")
-                        .WithMany()
+                        .WithMany("AnswerBlock")
                         .HasForeignKey("CompanyID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -587,8 +598,10 @@ namespace Survey.Infrastructure.Migrations
             modelBuilder.Entity("Survey.Infrastructure.Entities.Company", b =>
                 {
                     b.HasOne("Survey.Infrastructure.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
+                        .WithMany("Company")
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -615,7 +628,7 @@ namespace Survey.Infrastructure.Migrations
                     b.HasOne("Survey.Infrastructure.Entities.Surveys", "Survey")
                         .WithMany("Questions")
                         .HasForeignKey("SurveyID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.Navigation("AnwserBlock");
@@ -649,7 +662,9 @@ namespace Survey.Infrastructure.Migrations
                 {
                     b.HasOne("Survey.Infrastructure.Entities.Company", "Company")
                         .WithMany("Surveys")
-                        .HasForeignKey("CompanyID");
+                        .HasForeignKey("CompanyID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Company");
                 });
@@ -663,6 +678,8 @@ namespace Survey.Infrastructure.Migrations
 
             modelBuilder.Entity("Survey.Infrastructure.Entities.Company", b =>
                 {
+                    b.Navigation("AnswerBlock");
+
                     b.Navigation("Surveys");
                 });
 
@@ -676,6 +693,11 @@ namespace Survey.Infrastructure.Migrations
                     b.Navigation("Questions");
 
                     b.Navigation("SurveyReport");
+                });
+
+            modelBuilder.Entity("Survey.Infrastructure.Entities.User", b =>
+                {
+                    b.Navigation("Company");
                 });
 #pragma warning restore 612, 618
         }

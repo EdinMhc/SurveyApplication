@@ -19,23 +19,22 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
 
-// CreatedBy dodaj u Company
-// Dodaj users napravi da radi prvobitan login pa onda connect sa ostalim tabelama (company ,survey ...)
+// TODO
+// Refactor the code.
+// Create new authorization attribute with same roles.
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.AddConsole();
 builder.Logging.ClearProviders();
 
 // Add services to the container.
-
 ConfigureLogging();
 builder.Host.UseSerilog();
 
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ExceptionResponseHandlingFilter>();
-}).AddJsonOptions(x => // --------------Allows ENUM entites to be converted into Json and back--------------
+}).AddJsonOptions(x =>
 {
-    // serialize enums as strings in api responses (e.g. Role)
     x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
@@ -45,7 +44,6 @@ builder.Services.AddDbContext<ContextClass>(
 
 builder.Services.AddCors();
 
-// ------------------------------------JWT Related------------------------------------
 var jwtSettings = new JwtSettings();
 builder.Configuration.Bind(nameof(jwtSettings), jwtSettings);
 builder.Services.AddSingleton(jwtSettings);
@@ -53,7 +51,7 @@ builder.Services.AddSingleton(jwtSettings);
 builder.Services.AddIdentityCore<User>()
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<ContextClass>();
-// ----------------------------------------------------------------------------------
+
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddScoped<ICompanyService, CompanyService>();
@@ -70,7 +68,6 @@ builder.Services.AddScoped<Survey.Domain.Services.AnwserService.IAnswerService, 
 
 builder.Services.AddScoped<Survey.Domain.Services.SurveyReportDataService.ISurveyReportDataService, Survey.Domain.Services.SurveyReportDataService.SurveyReportDataService>();
 
-// ------------------------------------JWT Related-------------------------------
 builder.Services.AddScoped<Survey.Domain.Services.IdentityService.Interfaces.IIdentityService, Survey.Domain.Services.IdentityService.IdentityService>();
 
 builder.Services.AddHttpContextAccessor();
@@ -130,7 +127,6 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -165,10 +161,8 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
-// Dapper generic repository
 builder.Services.AddInfrastructure();
 
-// -------------------------------Authorization for policy-------------------------------
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("Users", policy =>
@@ -178,15 +172,12 @@ builder.Services.AddAuthorization(options =>
         policy => policy.AddRequirements(new AllowAnonymousAuthorizationRequirement()));
 });
 
-// --------------------------------------------------------------------------------------
-
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(options =>
     {
         options.SuppressMapClientErrors = true;
     });
 
-// FOR IGNORING THE REFERENCE HANDLERS BUG. But can list all the tables inside a entity.
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ExceptionResponseHandlingFilter>();
@@ -203,7 +194,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Api v1"));
 }
 
-// For Handling error message on swagger if unauthorized
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/error");
@@ -211,7 +201,6 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.ConfigureExceptionHandler();
-// -----------------------------------------------------
 
 // app.ConfigureExceptionHandler();
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -161,20 +162,21 @@ namespace Survey.Infrastructure.Migrations
                 {
                     CompanyID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CompanyName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    CompanyName = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
+                    Address = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false),
+                    Email = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime", nullable: false),
+                    UserID = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Company", x => x.CompanyID);
                     table.ForeignKey(
-                        name: "FK_Company_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Company_AspNetUsers_UserID",
+                        column: x => x.UserID,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -208,8 +210,8 @@ namespace Survey.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CompanyID = table.Column<int>(type: "int", nullable: false),
                     CodeOfAnwserBlock = table.Column<int>(type: "int", nullable: false),
-                    AnwserBlockName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    BlockType = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false)
+                    AnwserBlockName = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false),
+                    BlockType = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -228,11 +230,11 @@ namespace Survey.Infrastructure.Migrations
                 {
                     SurveyID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    SurveyName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    CompanyID = table.Column<int>(type: "int", nullable: true)
+                    IsActive = table.Column<bool>(type: "bit", maxLength: 255, nullable: false),
+                    CreatedBy = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime", nullable: false),
+                    SurveyName = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false),
+                    CompanyID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -241,7 +243,8 @@ namespace Survey.Infrastructure.Migrations
                         name: "FK_Survey_Company_CompanyID",
                         column: x => x.CompanyID,
                         principalTable: "Company",
-                        principalColumn: "CompanyID");
+                        principalColumn: "CompanyID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -251,7 +254,7 @@ namespace Survey.Infrastructure.Migrations
                     AnwserID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     AnwserBlockID = table.Column<int>(type: "int", nullable: false),
-                    AnwserText = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false)
+                    AnwserText = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -271,9 +274,9 @@ namespace Survey.Infrastructure.Migrations
                     QuestionID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     AnwserBlockID = table.Column<int>(type: "int", nullable: false),
-                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    QuestionText = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    QuestionType = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Code = table.Column<string>(type: "varchar(255)", nullable: false),
+                    QuestionText = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false),
+                    QuestionType = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
                     SurveyID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -289,8 +292,7 @@ namespace Survey.Infrastructure.Migrations
                         name: "FK_Question_Survey_SurveyID",
                         column: x => x.SurveyID,
                         principalTable: "Survey",
-                        principalColumn: "SurveyID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "SurveyID");
                 });
 
             migrationBuilder.CreateTable(
@@ -318,16 +320,16 @@ namespace Survey.Infrastructure.Migrations
                 name: "surveyReportData",
                 columns: table => new
                 {
-                    RespondentID = table.Column<int>(type: "int", nullable: false)
+                    RespondentId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     SurveyReportID = table.Column<int>(type: "int", nullable: false),
-                    QuestionID = table.Column<int>(type: "int", nullable: false),
+                    QuestionID = table.Column<int>(type: "int", maxLength: 100, nullable: false),
                     AnswerID = table.Column<int>(type: "int", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreatedDate = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_surveyReportData", x => x.RespondentID);
+                    table.PrimaryKey("PK_surveyReportData", x => x.RespondentId);
                     table.ForeignKey(
                         name: "FK_surveyReportData_SurveyReport_SurveyReportID",
                         column: x => x.SurveyReportID,
@@ -339,17 +341,17 @@ namespace Survey.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "4d327389-6835-47ad-a7ef-fd8f5ae55899", "ef05a6a5-1434-4a7a-9ff3-34e639ae5610", "Admin", "Admin" });
+                values: new object[] { "a0124983-f40a-4577-a3fc-e9764b2f3417", "57c9e353-dc83-406a-981f-9f9c5f175396", "Admin", "Admin" });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "7b90eaac-c59a-4ae5-8b81-bca59e221ee0", "395e12d0-609f-4e54-aceb-5434543287f6", "SuperAdmin", "SuperAdmin" });
+                values: new object[] { "cfbb4447-2bcd-4c17-820f-ed3a411ffadc", "332d4db0-d72a-4a62-89f2-25380e7a9743", "SuperAdmin", "SuperAdmin" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "f310e9a0-3fb0-4253-89ba-5c4a9699385f", 0, "d7a95497-c93f-4146-aa9a-ca7d75c4416e", "edin.muhic@forsta.com", false, "Edin", "Muhic", false, null, "EDIN.MUHIC@FORSTA.COM", "EDIN.MUHIC@FORSTA.COM", "AQAAAAEAACcQAAAAEMF/jR4CGcZfNBTxLIe5QyaadJ5RFYRfZSh1I/1gfRjjTF9UPjhxDDa3+07E+tGzhQ==", null, false, "1a0be691-1d74-4413-9b32-452879b3051e", false, "edin.muhic@forsta.com" });
+                values: new object[] { "8d646793-afcb-4056-b48a-9adc44381689", 0, "04400168-714f-4661-b9d2-64273f03b569", "edinmuhic00@gmail.com", false, "Edin", "Muhic", false, null, "EDINMUHIC00@GMAIL.COM", "EDINMUHIC00@GMAIL.COM", "AQAAAAEAACcQAAAAEMF/jR4CGcZfNBTxLIe5QyaadJ5RFYRfZSh1I/1gfRjjTF9UPjhxDDa3+07E+tGzhQ==", null, false, "9497e336-c916-47b6-a7f6-63c0f10d81f1", false, "edinmuhic00@gmail.com" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Anwser_AnwserBlockID",
@@ -401,9 +403,9 @@ namespace Survey.Infrastructure.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Company_UserId",
+                name: "IX_Company_UserID",
                 table: "Company",
-                column: "UserId");
+                column: "UserID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Question_AnwserBlockID",
