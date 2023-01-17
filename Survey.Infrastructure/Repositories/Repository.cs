@@ -22,7 +22,7 @@
 
         public T GetByID(object id)
         {
-            return this.entities.Find(id);
+            return entities.Find(id);
         }
 
         public IEnumerable<TType> Get<TType>(Expression<Func<T, bool>> where, Expression<Func<T, TType>> select) where TType : class
@@ -46,9 +46,9 @@
             this.entities.Remove(entity);
         }
 
-        public async Task<bool> ExistsAsync(int cityId)
+        public async Task<bool> ExistsAsync(int companyId)
         {
-            return await this._context.Company.AnyAsync(c => c.CompanyID == cityId);
+            return await this._context.Company.AnyAsync(c => c.CompanyID == companyId);
         }
     }
 }

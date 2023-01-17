@@ -1,88 +1,98 @@
-﻿namespace Survey.API.Controllers
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Survey.API.DTOs.SurveyDtos;
+using Survey.Domain.Services.SurveyService;
+using Survey.Infrastructure.Entities;
+
+namespace Survey.API.Controllers
 {
-    using AutoMapper;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
-    using Survey.API.DTOs.SurveyDtos;
-    using Survey.API.JwtRelated.Helpers;
-    using Survey.Domain.Services.Helper_Admin;
-    using Survey.Domain.Services.SurveyService;
 
     [Authorize]
     [ApiController]
     [Route("api/{companyId}/surveys")]
-    public class SurveyController : Controller
+    public class SurveyController : BaseController<SurveyController>
     {
-        private readonly IMapper mapper;
-        private readonly ISurveyService surveyService;
+        private readonly IMapper _mapper;
+        private readonly ISurveyService _surveyService;
 
-        public SurveyController(IMapper mapper, ISurveyService surveyService)
+        public SurveyController(IMapper mapper, ISurveyService surveyService, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
-            this.mapper = mapper ??
+            _mapper = mapper ??
                 throw new ArgumentNullException(nameof(mapper));
-            this.surveyService = surveyService ??
+            _surveyService = surveyService ??
                 throw new ArgumentNullException(nameof(surveyService));
         }
 
-        // GET ALL
+        /// <summary>
+        /// Gets all surveys 
+        /// </summary>
+        /// <param name="companyId"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Admin, SuperAdmin", Policy = "IsAnonymousUser")]
         [HttpGet]
         public ActionResult<IEnumerable<SurveyBasicInfoDto>> GetAll(int companyId)
         {
-            string userId = GeneralExtensions.GetUserId(this.HttpContext);
-            string role = this.User.IsInRole(AdminHelper.Admin) ? AdminHelper.Admin : AdminHelper.SuperAdmin;
-
-            var surveys = this.surveyService.GetAll(companyId, role, userId);
-            return this.Ok(this.mapper.Map<List<SurveyBasicInfoDto>>(surveys));
+            var surveys = _surveyService.GetAll(companyId, UserInfo.role, UserInfo.userId);
+            return Ok(_mapper.Map<List<SurveyBasicInfoDto>>(surveys));
         }
 
-        // GET SPECIFIC
+        /// <summary>
+        /// Get specific survey
+        /// </summary>
+        /// <param name="surveyId"></param>
+        /// <param name="companyId"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Admin, SuperAdmin", Policy = "IsAnonymousUser")]
         [HttpGet("{surveyId}")]
         public IActionResult Get(int surveyId, int companyId)
         {
-            string userId = GeneralExtensions.GetUserId(this.HttpContext);
-            string role = this.User.IsInRole(AdminHelper.Admin) ? AdminHelper.Admin : AdminHelper.SuperAdmin;
-            var surveys = this.surveyService.GetById(surveyId, companyId, role, userId);
-            return this.Ok(this.mapper.Map<SurveyBasicInfoDto>(surveys));
+            var surveys = _surveyService.GetById(surveyId, companyId, UserInfo.role, UserInfo.userId);
+            return Ok(_mapper.Map<SurveyBasicInfoDto>(surveys));
         }
 
-        // CREATE DATA INSIDE TABLE
+        /// <summary>
+        /// Create survey
+        /// </summary>
+        /// <param name="companyId"></param>
+        /// <param name="surveyInfo"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Admin, SuperAdmin", Policy = "IsAnonymousUser")]
         [HttpPost]
         public async Task<IActionResult> PostAsync(int companyId, [FromBody] SurveyForCreationDto surveyInfo)
         {
-            string userId = GeneralExtensions.GetUserId(this.HttpContext);
-            var mapped = this.mapper.Map<Survey.Infrastructure.Entities.Surveys>(surveyInfo);
-            string role = this.User.IsInRole(AdminHelper.Admin) ? AdminHelper.Admin : AdminHelper.SuperAdmin;
-
-            var survey = await this.surveyService.CreateAsync(mapped, companyId, role, userId);
-
-            return this.Ok(this.mapper.Map<SurveyBasicInfoDto>(survey));
+            var mapped = _mapper.Map<Surveys>(surveyInfo);
+            var survey = await _surveyService.CreateAsync(mapped, companyId, UserInfo.role, UserInfo.userId);
+            return Ok(_mapper.Map<SurveyBasicInfoDto>(survey));
         }
 
-        // DELETE DATA INSIDE TABLE
+        /// <summary>
+        /// Delete specific survey
+        /// </summary>
+        /// <param name="surveyId"></param>
+        /// <param name="companyId"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Admin, SuperAdmin", Policy = "IsAnonymousUser")]
         [HttpDelete("{surveyId}")]
         public async Task<IActionResult> Delete(int surveyId, int companyId)
         {
-            string userId = GeneralExtensions.GetUserId(this.HttpContext);
-            string role = this.User.IsInRole(AdminHelper.Admin) ? AdminHelper.Admin : AdminHelper.SuperAdmin;
-
-            return this.Ok(await this.surveyService.DeleteAsync(surveyId, companyId, role, userId));
+            return Ok(await _surveyService.DeleteAsync(surveyId, companyId, UserInfo.role, UserInfo.userId));
         }
 
-        // UPDATE DATA INSIDE TABLE
+        /// <summary>
+        /// Update survey
+        /// </summary>
+        /// <param name="surveyId"></param>
+        /// <param name="companyId"></param>
+        /// <param name="surveyInfo"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Admin, SuperAdmin", Policy = "IsAnonymousUser")]
         [HttpPut("{surveyId}")]
         public async Task<IActionResult> PutAsync(int surveyId, int companyId, [FromBody] SurveyUpdateDto surveyInfo)
         {
-            string userId = GeneralExtensions.GetUserId(this.HttpContext);
-            var mapped = this.mapper.Map<Survey.Infrastructure.Entities.Surveys>(surveyInfo);
-            string role = this.User.IsInRole(AdminHelper.Admin) ? AdminHelper.Admin : AdminHelper.SuperAdmin;
-
-            var survey = await this.surveyService.UpdateAsync(mapped, surveyId, companyId, role, userId);
-            return this.Ok(this.mapper.Map<SurveyBasicInfoDto>(survey));
+            var mapped = _mapper.Map<Surveys>(surveyInfo);
+            var survey = await _surveyService.UpdateAsync(mapped, surveyId, companyId, UserInfo.role, UserInfo.userId);
+            return Ok(_mapper.Map<SurveyBasicInfoDto>(survey));
         }
     }
 }

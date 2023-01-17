@@ -7,60 +7,47 @@
 
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly ContextClass context;
-        private IRepository<Company> companyRepository;
-        private IRepository<Surveys> surveyRepository;
-        private IRepository<Question> questionRepository;
-        private IRepository<SurveyReport> surveyReportRepository;
-        private IRepository<Anwser> anwserRepository;
-        private IRepository<AnwserBlock> anwserBlockRepository;
-        private IRepository<User> userRepository;
-        private IRepository<SurveyReportData> surveyReportDataRepository;
-        private IGenericRepository<Company> companyGenericRepository;
-        private IConfiguration config;
+        private readonly ContextClass _context;
+        private readonly IConfiguration _config;
+        private IRepository<Company> _companyRepository;
+        private IRepository<Surveys> _surveyRepository;
+        private IRepository<Question> _questionRepository;
+        private IRepository<SurveyReport> _surveyReportRepository;
+        private IRepository<Anwser> _anwserRepository;
+        private IRepository<AnwserBlock> _anwserBlockRepository;
+        private IRepository<User> _userRepository;
+        private IRepository<SurveyReportData> _surveyReportDataRepository;
+        private IGenericRepository<Company> _companyGenericRepository;
 
         public UnitOfWork(ContextClass context, IConfiguration config)
         {
-            this.context = context;
-            this.config = config;
+            _context = context;
+            _config = config;
         }
 
         IGenericRepository<Company> IUnitOfWork.companyGenericRepository
         {
             get
             {
-                if (this.companyGenericRepository == null)
+                if (_companyGenericRepository == null)
                 {
-                    this.companyGenericRepository = new GenericRepository<Company>("Company", "CompanyId", this.config);
+                    _companyGenericRepository = new GenericRepository<Company>("Company", "CompanyId", _config);
                 }
 
-                return this.companyGenericRepository;
+                return _companyGenericRepository;
             }
         }
-
-        //public IGenericRepository<Company> CompanyGenericRepository
-        //{
-        //    get
-        //    {
-        //        if (this.companyGenericRepository == null)
-        //        {
-        //            this.companyGenericRepository = new GenericRepository<Company>("Company", "CompanyId", this.config);
-        //        }
-
-        //        return this.companyGenericRepository;
-        //    }
-        //}
 
         public IRepository<SurveyReportData> SurveyReportDataRepository
         {
             get
             {
-                if (this.surveyReportDataRepository == null)
+                if (_surveyReportDataRepository == null)
                 {
-                    this.surveyReportDataRepository = new Repository<SurveyReportData>(this.context);
+                    _surveyReportDataRepository = new Repository<SurveyReportData>(_context);
                 }
 
-                return this.surveyReportDataRepository;
+                return _surveyReportDataRepository;
             }
         }
 
@@ -68,12 +55,12 @@
         {
             get
             {
-                if (this.userRepository == null)
+                if (_userRepository == null)
                 {
-                    this.userRepository = new Repository<User>(this.context);
+                    _userRepository = new Repository<User>(_context);
                 }
 
-                return this.userRepository;
+                return _userRepository;
             }
         }
 
@@ -81,12 +68,12 @@
         {
             get
             {
-                if (this.companyRepository == null)
+                if (_companyRepository == null)
                 {
-                    this.companyRepository = new Repository<Company>(this.context);
+                    _companyRepository = new Repository<Company>(_context);
                 }
 
-                return this.companyRepository;
+                return _companyRepository;
             }
         }
 
@@ -94,12 +81,12 @@
         {
             get
             {
-                if (this.surveyRepository == null)
+                if (_surveyRepository == null)
                 {
-                    this.surveyRepository = new Repository<Surveys>(this.context);
+                    _surveyRepository = new Repository<Surveys>(_context);
                 }
 
-                return this.surveyRepository;
+                return _surveyRepository;
             }
         }
 
@@ -107,12 +94,12 @@
         {
             get
             {
-                if (this.anwserBlockRepository == null)
+                if (_anwserBlockRepository == null)
                 {
-                    this.anwserBlockRepository = new Repository<AnwserBlock>(this.context);
+                    _anwserBlockRepository = new Repository<AnwserBlock>(_context);
                 }
 
-                return this.anwserBlockRepository;
+                return _anwserBlockRepository;
             }
         }
 
@@ -120,12 +107,12 @@
         {
             get
             {
-                if (this.anwserRepository == null)
+                if (_anwserRepository == null)
                 {
-                    this.anwserRepository = new Repository<Anwser>(this.context);
+                    _anwserRepository = new Repository<Anwser>(_context);
                 }
 
-                return this.anwserRepository;
+                return _anwserRepository;
             }
         }
 
@@ -133,12 +120,12 @@
         {
             get
             {
-                if (this.surveyReportRepository == null)
+                if (_surveyReportRepository == null)
                 {
-                    this.surveyReportRepository = new Repository<SurveyReport>(this.context);
+                    _surveyReportRepository = new Repository<SurveyReport>(_context);
                 }
 
-                return this.surveyReportRepository;
+                return _surveyReportRepository;
             }
         }
 
@@ -146,18 +133,18 @@
         {
             get
             {
-                if (this.questionRepository == null)
+                if (_questionRepository == null)
                 {
-                    this.questionRepository = new Repository<Question>(this.context);
+                    _questionRepository = new Repository<Question>(_context);
                 }
 
-                return this.questionRepository;
+                return _questionRepository;
             }
         }
 
         public async Task SaveChangesAsync()
         {
-            await this.context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
     }
 }

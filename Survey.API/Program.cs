@@ -22,6 +22,7 @@ using System.Text.Json.Serialization;
 // TODO
 // Refactor the code.
 // Create new authorization attribute with same roles.
+// Update all survices
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.AddConsole();
 builder.Logging.ClearProviders();

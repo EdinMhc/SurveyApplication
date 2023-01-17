@@ -5,4 +5,10 @@
         public const string Admin = "Admin";
         public const string SuperAdmin = "SuperAdmin";
     }
+
+    public enum UserRole
+    {
+        Admin,
+        SuperAdmin,
+    }
 }

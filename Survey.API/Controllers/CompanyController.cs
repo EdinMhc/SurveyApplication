@@ -2,40 +2,37 @@
 {
     using AutoMapper;
     using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Survey.API.DTOs.Company;
-    using Survey.API.JwtRelated.Helpers;
     using Survey.Domain.Services.CompanyService;
-    using Survey.Domain.Services.Helper_Admin;
     using Survey.Infrastructure.Entities;
 
     [Authorize]
     [ApiController]
     [Route("api/companies")]
-    public class CompanyController : ControllerBase
+    public class CompanyController : BaseController<CompanyController>
     {
-        private readonly IMapper mapper;
-        private readonly ICompanyService companyService;
+        private readonly IMapper _mapper;
+        private readonly ICompanyService _companyService;
 
-        public CompanyController(IMapper mapper, ICompanyService companyService, UserManager<User> userManager)
+        public CompanyController(IMapper mapper, ICompanyService companyService, IHttpContextAccessor contextAccessor) : base(contextAccessor)
         {
-            this.mapper = mapper ??
+            _mapper = mapper ??
                 throw new ArgumentNullException(nameof(mapper));
-            this.companyService = companyService ??
+            _companyService = companyService ??
                 throw new ArgumentNullException(nameof(companyService));
         }
 
+        /// <summary>
+        /// Gets all Companies
+        /// </summary>
+        /// <returns></returns>
         [Authorize(Roles = "Admin, SuperAdmin", Policy = "IsAnonymousUser")]
         [HttpGet]
         public ActionResult<IEnumerable<CompanyBasicInfoDto>> GetAll()
         {
-            string userId = GeneralExtensions.GetUserId(this.HttpContext);
-
-            string role = this.User.IsInRole(AdminHelper.Admin) ? AdminHelper.Admin : AdminHelper.SuperAdmin;
-
-            var companiesSuperAdmin = this.companyService.GetAll(role, userId);
-            return this.Ok(this.mapper.Map<List<CompanyBasicInfoDto>>(companiesSuperAdmin));
+            var companiesSuperAdmin = _companyService.GetAll(UserInfo.userId, UserInfo.userId);
+            return Ok(_mapper.Map<List<CompanyBasicInfoDto>>(companiesSuperAdmin));
         }
 
         /// <summary>
@@ -47,11 +44,8 @@
         [HttpGet("{companyId}")]
         public IActionResult Get(int companyId)
         {
-            string userId = GeneralExtensions.GetUserId(this.HttpContext);
-            string role = this.User.IsInRole(AdminHelper.Admin) ? AdminHelper.Admin : AdminHelper.SuperAdmin;
-
-            var company1 = this.companyService.GetById(companyId, role, userId);
-            return this.Ok(this.mapper.Map<CompanyBasicInfoDto>(company1));
+            var company1 = _companyService.GetById(companyId, UserInfo.userId, UserInfo.userId);
+            return Ok(_mapper.Map<CompanyBasicInfoDto>(company1));
         }
 
         /// <summary>
@@ -63,12 +57,9 @@
         [HttpPost]
         public async Task<IActionResult> PostAsync([FromBody] CompanyCreationDto companyInfo)
         {
-            string userId = GeneralExtensions.GetUserId(this.HttpContext);
-            var mapped = this.mapper.Map<Company>(companyInfo);
-            string role = this.User.IsInRole(AdminHelper.Admin) ? AdminHelper.Admin : AdminHelper.SuperAdmin;
-
-            var company = await this.companyService.CreateAsync(mapped, role, userId);
-            return this.Ok(this.mapper.Map<CompanyBasicInfoDto>(company));
+            var mapped = _mapper.Map<Company>(companyInfo);
+            var company = await _companyService.CreateAsync(mapped, UserInfo.userId, UserInfo.userId);
+            return Ok(_mapper.Map<CompanyBasicInfoDto>(company));
         }
 
         /// <summary>
@@ -81,13 +72,9 @@
         [HttpPut("{companyId}")]
         public async Task<IActionResult> PutAsync(int companyId, [FromBody] CompanyCreationDto companyInfo)
         {
-            string userId = GeneralExtensions.GetUserId(this.HttpContext);
-
-            var mapped = this.mapper.Map<Company>(companyInfo);
-            string role = this.User.IsInRole(AdminHelper.Admin) ? AdminHelper.Admin : AdminHelper.SuperAdmin;
-
-            var company1 = await this.companyService.UpdateAsync(mapped, role, companyId, userId);
-            return this.Ok(this.mapper.Map<CompanyBasicInfoDto>(company1));
+            var mapped = _mapper.Map<Company>(companyInfo);
+            var company1 = await _companyService.UpdateAsync(mapped, UserInfo.role, companyId, UserInfo.userId);
+            return Ok(_mapper.Map<CompanyBasicInfoDto>(company1));
         }
 
         /// <summary>
@@ -99,10 +86,7 @@
         [HttpDelete("{companyId}")]
         public async Task<IActionResult> Delete(int companyId)
         {
-            string userId = GeneralExtensions.GetUserId(this.HttpContext);
-            string role = this.User.IsInRole(AdminHelper.Admin) ? AdminHelper.Admin : AdminHelper.SuperAdmin;
-
-            return this.Ok(await this.companyService.DeleteAsync(companyId, role, userId));
+            return Ok(await _companyService.DeleteAsync(companyId, UserInfo.userId, UserInfo.userId));
         }
     }
 }

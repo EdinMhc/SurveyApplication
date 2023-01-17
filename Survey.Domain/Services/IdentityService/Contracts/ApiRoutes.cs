@@ -9,7 +9,7 @@
         public static class Identity
         {
             public const string Login = Base + "/identity/login";
-            public const string Register = Base + "/identity/register";
+            public const string Register = Base + "/identity/register/{role}";
             public const string Refresh = Base + "/identity/refresh";
         }
     }

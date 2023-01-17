@@ -2,24 +2,6 @@
 {
     using System.Security.Claims;
 
-    public static class ClaimsPrincipalExtensions
-    {
-        public static string GetEmail(this System.Security.Claims.ClaimsPrincipal claimsPrincipal)
-            => claimsPrincipal.FindFirstValue(ClaimTypes.Email);
-
-        public static string GetFirstName(this System.Security.Claims.ClaimsPrincipal claimsPrincipal)
-            => claimsPrincipal.FindFirstValue(ClaimTypes.Name);
-
-        public static string GetLastName(this System.Security.Claims.ClaimsPrincipal claimsPrincipal)
-            => claimsPrincipal.FindFirstValue(ClaimTypes.Surname);
-
-        public static string GetPhoneNumber(this System.Security.Claims.ClaimsPrincipal claimsPrincipal)
-            => claimsPrincipal.FindFirstValue(ClaimTypes.MobilePhone);
-
-        public static string GetUserId(this System.Security.Claims.ClaimsPrincipal claimsPrincipal)
-           => claimsPrincipal.FindFirstValue("UserId");
-    }
-
     public static class GeneralExtensions
     {
         public static string GetUserId(this HttpContext httpContext)

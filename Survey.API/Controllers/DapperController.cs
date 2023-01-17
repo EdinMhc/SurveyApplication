@@ -1,13 +1,14 @@
-﻿namespace Survey.API.Controllers
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Survey.API.DTOs.Company;
+using Survey.API.JwtRelated.Helpers;
+using Survey.Domain.DapperServices.DapperCompanyServices;
+using Survey.Domain.Services.Helper_Admin;
+using Survey.Infrastructure.DapperRepository.StoredProcedure.DapperDto;
+
+namespace Survey.API.Controllers
 {
-    using AutoMapper;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
-    using Survey.API.DTOs.Company;
-    using Survey.API.JwtRelated.Helpers;
-    using Survey.Domain.DapperServices.DapperCompanyServices;
-    using Survey.Domain.Services.Helper_Admin;
-    using Survey.Infrastructure.DapperRepository.StoredProcedure.DapperDto;
 
     [Authorize]
     [Route("api/dapper")]

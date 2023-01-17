@@ -1,26 +1,35 @@
-﻿namespace Survey.Domain.Services.SurveyService
+﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Survey.Domain.Services.FluentValidation.Survey;
+using Survey.Domain.Services.Helper_Admin;
+using Survey.Infrastructure.Entities;
+using Survey.Infrastructure.Repositories;
+
+namespace Survey.Domain.Services.SurveyService
 {
-    using global::FluentValidation;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Logging;
-    using Survey.Domain.Services.FluentValidation.Survey;
-    using Survey.Domain.Services.Helper_Admin;
-    using Survey.Infrastructure.Entities;
-    using Survey.Infrastructure.Repositories;
 
     public class SurveyService : ISurveyService
     {
-        private readonly ILogger<SurveyService> logger;
-        private IUnitOfWork unitOfWork;
+        private readonly ILogger<SurveyService> _logger;
+        private IUnitOfWork _unitOfWork;
 
         public SurveyService(
             IUnitOfWork unitOfWork,
             ILogger<SurveyService> logger)
         {
-            this.unitOfWork = unitOfWork;
-            this.logger = logger;
+            _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
+        /// <summary>
+        /// Gets all surveys
+        /// </summary>
+        /// <param name="companyId"></param>
+        /// <param name="role"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        /// <exception cref="CustomException.CustomException"></exception>
         public IEnumerable<Surveys> GetAll(int companyId, string? role, string? userId)
         {
             bool isAdmin = role == AdminHelper.Admin;
@@ -31,20 +40,29 @@
             }
 
             var dbCompany = isAdmin
-                ? this.unitOfWork.CompanyRepository.GetAll().FirstOrDefault(x => x.CompanyID == companyId && x.User.Id == userId)
-                : this.unitOfWork.CompanyRepository.GetByID(companyId);
+                ? _unitOfWork.CompanyRepository.GetAll().FirstOrDefault(x => x.CompanyID == companyId && x.User.Id == userId)
+                : _unitOfWork.CompanyRepository.GetByID(companyId);
             if (dbCompany == null)
             {
                 throw new CustomException.CustomException(CustomException.ErrorResponseCode.NoResultsOrUserMismatch);
             }
 
             var result = role == AdminHelper.Admin
-                ? this.unitOfWork.SurveysRepository.GetAll().Include("SurveyReport").Where(x => x.CompanyID == companyId)
-                : this.unitOfWork.SurveysRepository.GetAll().Include("SurveyReport");
+                ? _unitOfWork.SurveysRepository.GetAll().Include("SurveyReport").Where(x => x.CompanyID == companyId)
+                : _unitOfWork.SurveysRepository.GetAll().Include("SurveyReport");
 
             return result;
         }
 
+        /// <summary>
+        /// Gets a specific survey
+        /// </summary>
+        /// <param name="surveyid"></param>
+        /// <param name="companyId"></param>
+        /// <param name="role"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        /// <exception cref="CustomException.CustomException"></exception>
         public Surveys GetById(int surveyid, int companyId, string? role, string userId)
         {
             bool isAdmin = role == AdminHelper.Admin;
@@ -60,16 +78,16 @@
             }
 
             var dbCompany = isAdmin
-                ? this.unitOfWork.CompanyRepository.GetAll().FirstOrDefault(x => x.CompanyID == companyId && x.User.Id == userId)
-                : this.unitOfWork.CompanyRepository.GetByID(companyId);
+                ? _unitOfWork.CompanyRepository.GetAll().FirstOrDefault(x => x.CompanyID == companyId && x.User.Id == userId)
+                : _unitOfWork.CompanyRepository.GetByID(companyId);
             if (dbCompany == null)
             {
                 throw new CustomException.CustomException(CustomException.ErrorResponseCode.NoResultsOrUserMismatch);
             }
 
             var result = role == AdminHelper.Admin
-                ? this.unitOfWork.SurveysRepository.GetAll().Include("SurveyReport").FirstOrDefault(x => x.CompanyID == companyId && x.SurveyID == surveyid)
-                : this.unitOfWork.SurveysRepository.GetAll().Include("SurveyReport").FirstOrDefault(x => x.SurveyID == surveyid);
+                ? _unitOfWork.SurveysRepository.GetAll().Include("SurveyReport").FirstOrDefault(x => x.CompanyID == companyId && x.SurveyID == surveyid)
+                : _unitOfWork.SurveysRepository.GetAll().Include("SurveyReport").FirstOrDefault(x => x.SurveyID == surveyid);
             if (result == null)
             {
                 throw new CustomException.CustomException(CustomException.ErrorResponseCode.SurveyNotExistant);
@@ -78,21 +96,30 @@
             return result;
         }
 
+        /// <summary>
+        /// Creates a survey
+        /// </summary>
+        /// <param name="survey"></param>
+        /// <param name="companyId"></param>
+        /// <param name="role"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        /// <exception cref="CustomException.CustomException"></exception>
         public async Task<Surveys> CreateAsync(Surveys survey, int companyId, string? role, string userId)
         {
             try
             {
                 bool isAdmin = role == AdminHelper.Admin;
 
-                var result = new SurveyValidator(this.unitOfWork, companyId, userId).Validate(survey);
+                var result = new SurveyValidator(_unitOfWork, companyId, userId).Validate(survey);
                 if (!result.IsValid)
                 {
                     throw new CustomException.CustomException(String.Join(",\n", result.Errors.Select(x => x.ErrorMessage)));
                 }
 
                 var dbCompany = isAdmin
-                    ? this.unitOfWork.CompanyRepository.GetAll().FirstOrDefault(x => x.CompanyID == companyId && x.User.Id == userId)
-                    : this.unitOfWork.CompanyRepository.GetByID(companyId);
+                    ? _unitOfWork.CompanyRepository.GetAll().FirstOrDefault(x => x.CompanyID == companyId && x.User.Id == userId)
+                    : _unitOfWork.CompanyRepository.GetByID(companyId);
                 if (dbCompany == null)
                 {
                     throw new CustomException.CustomException(CustomException.ErrorResponseCode.NoResultsOrUserMismatch);
@@ -102,19 +129,28 @@
                 survey.CreatedBy = dbCompany.CompanyName;
                 survey.CompanyID = dbCompany.CompanyID;
 
-                this.unitOfWork.SurveysRepository.Add(survey);
-                await this.unitOfWork.SaveChangesAsync();
+                _unitOfWork.SurveysRepository.Add(survey);
+                await _unitOfWork.SaveChangesAsync();
 
                 return survey;
             }
             catch (Exception ex)
             {
-                this.logger.LogError($"Error occurred: {ex}");
+                _logger.LogError($"Error occurred: {ex}");
                 if (ex is CustomException.CustomException) throw ex;
                 throw new CustomException.CustomException(CustomException.ErrorResponseCode.GlobalError);
             }
         }
 
+        /// <summary>
+        /// Delete specific survey
+        /// </summary>
+        /// <param name="surveyId"></param>
+        /// <param name="companyId"></param>
+        /// <param name="role"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        /// <exception cref="CustomException.CustomException"></exception>
         public async Task<bool> DeleteAsync(int surveyId, int companyId, string? role, string userId)
         {
             try
@@ -132,60 +168,67 @@
                 }
 
                 var dbCompany = isAdmin
-                    ? this.unitOfWork.CompanyRepository.GetAll().FirstOrDefault(x => x.CompanyID == companyId && x.User.Id == userId)
-                    : this.unitOfWork.CompanyRepository.GetByID(companyId);
+                    ? _unitOfWork.CompanyRepository.GetAll().FirstOrDefault(x => x.CompanyID == companyId && x.User.Id == userId)
+                    : _unitOfWork.CompanyRepository.GetByID(companyId);
 
                 if (dbCompany == null)
                 {
                     throw new CustomException.CustomException(CustomException.ErrorResponseCode.NoResultsOrUserMismatch);
                 }
 
-                // In order to cascade delete you have to include the relevant questions or tables
                 var result = role == AdminHelper.Admin
-                    ? this.unitOfWork.SurveysRepository.GetAll().Include(x => x.Questions).FirstOrDefault(p => p.SurveyID == surveyId && p.CompanyID == companyId)
-                    : this.unitOfWork.SurveysRepository.GetAll().Include(x => x.Questions).FirstOrDefault(p => p.SurveyID == surveyId);
+                    ? _unitOfWork.SurveysRepository.GetAll().Include(x => x.Questions).FirstOrDefault(p => p.SurveyID == surveyId && p.CompanyID == companyId)
+                    : _unitOfWork.SurveysRepository.GetAll().Include(x => x.Questions).FirstOrDefault(p => p.SurveyID == surveyId);
                 if (result == null)
                 {
                     throw new CustomException.CustomException(CustomException.ErrorResponseCode.SurveyNotExistant);
                 }
 
-                this.unitOfWork.SurveysRepository.Delete(result);
-                await this.unitOfWork.SaveChangesAsync();
+                _unitOfWork.SurveysRepository.Delete(result);
+                await _unitOfWork.SaveChangesAsync();
 
                 return true;
             }
             catch (Exception ex)
             {
-                this.logger.LogError(ex, $"Error occurred: {ex.Message}");
+                _logger.LogError(ex, $"Error occurred: {ex.Message}");
                 if (ex is CustomException.CustomException) throw ex;
                 throw new CustomException.CustomException(CustomException.ErrorResponseCode.GlobalError);
             }
         }
 
+        /// <summary>
+        /// Updates survey info
+        /// </summary>
+        /// <param name="survey"></param>
+        /// <param name="surveyId"></param>
+        /// <param name="companyId"></param>
+        /// <param name="role"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        /// <exception cref="CustomException.CustomException"></exception>
         public async Task<Surveys> UpdateAsync(Surveys survey, int surveyId, int companyId, string? role, string userId)
         {
             try
             {
                 bool isAdmin = role == AdminHelper.Admin;
 
-                // Validation Survey Update
-                var result = new SurveyUpdateValidator(this.unitOfWork, companyId, userId, surveyId).Validate(survey);
+                var result = new SurveyUpdateValidator(_unitOfWork, companyId, userId, surveyId).Validate(survey);
                 if (!result.IsValid)
                 {
                     throw new CustomException.CustomException(String.Join(",\n", result.Errors.Select(x => x.ErrorMessage)));
                 }
 
-                // Checking userId and role
                 var dbCompany = isAdmin
-                    ? this.unitOfWork.CompanyRepository.GetAll().FirstOrDefault(x => x.CompanyID == companyId && x.User.Id == userId)
-                    : this.unitOfWork.CompanyRepository.GetByID(companyId);
+                    ? _unitOfWork.CompanyRepository.GetAll().FirstOrDefault(x => x.CompanyID == companyId && x.User.Id == userId)
+                    : _unitOfWork.CompanyRepository.GetByID(companyId);
 
                 if (dbCompany == null)
                 {
                     throw new CustomException.CustomException(CustomException.ErrorResponseCode.UserDoesNotMatch);
                 }
 
-                var dbSurvey = this.unitOfWork.SurveysRepository.GetAll().FirstOrDefault(p => p.SurveyID == surveyId && p.CompanyID == companyId);
+                var dbSurvey = _unitOfWork.SurveysRepository.GetAll().FirstOrDefault(p => p.SurveyID == surveyId && p.CompanyID == companyId);
                 if (dbSurvey == null)
                 {
                     throw new CustomException.CustomException(CustomException.ErrorResponseCode.SurveyNotExistant);
@@ -195,14 +238,14 @@
 
                 dbSurvey.IsActive = survey.IsActive;
 
-                this.unitOfWork.SurveysRepository.Update(dbSurvey);
-                await this.unitOfWork.SaveChangesAsync();
+                _unitOfWork.SurveysRepository.Update(dbSurvey);
+                await _unitOfWork.SaveChangesAsync();
 
                 return dbSurvey;
             }
             catch (Exception ex)
             {
-                this.logger.LogError($"Error occurred: {ex}");
+                _logger.LogError($"Error occurred: {ex}");
                 if (ex is CustomException.CustomException) throw ex;
                 if (ex is ValidationException) throw ex;
                 throw new CustomException.CustomException(CustomException.ErrorResponseCode.GlobalError);
