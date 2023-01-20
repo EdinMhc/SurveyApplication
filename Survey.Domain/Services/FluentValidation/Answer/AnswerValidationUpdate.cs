@@ -7,76 +7,76 @@
 
     public class AnswerValidationUpdate : AbstractValidator<Anwser>
     {
-        private readonly int companyId;
-        private readonly int anwserBlockId;
-        private readonly int answerId;
-        private IUnitOfWork unitOfWork;
-        private ValidationResult result;
+        private readonly int CompanyId;
+        private readonly int AnwserBlockId;
+        private readonly int AnswerId;
+        private IUnitOfWork _unitOfWork;
+        private ValidationResult _result;
 
         public AnswerValidationUpdate(IUnitOfWork unitOfWork, int companyId, int anwserBlockId, int answerId)
         {
-            this.result = new ValidationResult();
-            this.unitOfWork = unitOfWork;
-            this.anwserBlockId = anwserBlockId;
-            this.companyId = companyId;
-            this.answerId = answerId;
+            _result = new ValidationResult();
+            _unitOfWork = unitOfWork;
+            AnwserBlockId = anwserBlockId;
+            CompanyId = companyId;
+            AnswerId = answerId;
 
-            this.RuleFor(x => x.AnwserText)
+            RuleFor(x => x.AnwserText)
                 .Length(1, 255).WithMessage("Question Text is shorter or longer than required")
                 .Unless(x => x.AnwserText == null || x.AnwserText == string.Empty);
         }
 
         public override ValidationResult Validate(ValidationContext<Anwser> context)
         {
-            this.result = base.Validate(context);
-            this.ValidateCompany();
-            this.ValidateAnswerBlock();
-            this.ValidateAnswer();
+            _result = base.Validate(context);
+            ValidateCompany();
+            ValidateAnswerBlock();
+            ValidateAnswer();
 
-            return this.result;
+            return _result;
         }
 
         private void ValidateCompany()
         {
-            if (this.companyId <= 0)
+            if (CompanyId <= 0)
             {
-                this.result.Errors.Add(new ValidationFailure("CompanyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.CompanyIDvalidation]));
+                _result.Errors.Add(new ValidationFailure("CompanyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.CompanyIDvalidation]));
             }
 
             // Company Existance
-            var companyInfo = this.unitOfWork.CompanyRepository.GetAll().FirstOrDefault(x => x.CompanyID == this.companyId);
+            var companyInfo = _unitOfWork.CompanyRepository.GetAll().FirstOrDefault(x => x.CompanyID == CompanyId);
             if (companyInfo == null)
             {
-                this.result.Errors.Add(new ValidationFailure("CompanyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.CompanyNotExistant]));
+                _result.Errors.Add(new ValidationFailure("CompanyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.CompanyNotExistant]));
             }
         }
 
         private void ValidateAnswerBlock()
         {
-            if (this.anwserBlockId <= 0)
+            if (AnwserBlockId <= 0)
             {
-                this.result.Errors.Add(new ValidationFailure("AnswerBlockId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.AnwserBlockIDBelowOrEqualToZero]));
+                _result.Errors.Add(new ValidationFailure("AnswerBlockId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.AnwserBlockIDBelowOrEqualToZero]));
             }
 
-            var anwserBlock = this.unitOfWork.AnwserBlockRepository.GetAll().FirstOrDefault(x => x.AnwserBlockID == this.anwserBlockId && x.CompanyID == this.companyId);
+            var anwserBlock = _unitOfWork.AnwserBlockRepository.GetAll().FirstOrDefault(x => x.AnwserBlockID == AnwserBlockId && x.CompanyID == CompanyId);
             if (anwserBlock == null)
             {
-                this.result.Errors.Add(new ValidationFailure("AnswerBlockId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.RelationShipAnswerBlockCompany]));
+                _result.Errors.Add(new ValidationFailure("AnswerBlockId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.RelationShipAnswerBlockCompany]));
             }
         }
 
         private void ValidateAnswer()
         {
-            if (this.answerId <= 0)
+            if (AnswerId <= 0)
             {
-                this.result.Errors.Add(new ValidationFailure("AnswerId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.AnwserIDBelowOrEqualToZero]));
+                _result.Errors.Add(new ValidationFailure("AnswerId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.AnwserIDBelowOrEqualToZero]));
             }
 
-            var dbAnswer1 = this.unitOfWork.AnwserRepository.GetAll().FirstOrDefault(x => x.AnwserBlockID == this.anwserBlockId && x.AnwserID == this.answerId);
+            var dbAnswer1 = _unitOfWork.AnwserRepository.GetAll().FirstOrDefault(x => x.AnwserBlockID == AnwserBlockId && x.AnwserID == AnswerId);
 
             if (dbAnswer1 == null)
             {
-                this.result.Errors.Add(new ValidationFailure("AnswerId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.AnwserNotExistant]));
+                _result.Errors.Add(new ValidationFailure("AnswerId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.AnwserNotExistant]));
 
             }
         }

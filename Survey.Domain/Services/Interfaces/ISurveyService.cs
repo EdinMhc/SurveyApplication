@@ -1,4 +1,4 @@
-﻿namespace Survey.Domain.Services.SurveyService
+﻿namespace Survey.Domain.Services.Interfaces
 {
     using Survey.Infrastructure.Entities;
 

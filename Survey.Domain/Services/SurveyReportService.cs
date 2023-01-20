@@ -1,51 +1,52 @@
-﻿namespace Survey.Domain.Services.SurveyReport_Service
+﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Survey.Domain.Services.FluentValidation.SurveyReport;
+using Survey.Domain.Services.Interfaces;
+using Survey.Infrastructure.Entities;
+using Survey.Infrastructure.Repositories;
+
+namespace Survey.Domain.Services
 {
-    using global::FluentValidation;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Logging;
-    using Survey.Domain.Services.FluentValidation.SurveyReport;
-    using Survey.Domain.Services.Helper_Admin;
-    using Survey.Infrastructure.Entities;
-    using Survey.Infrastructure.Repositories;
 
     public class SurveyReportService : ISurveyReportService
     {
-        private readonly IUnitOfWork unitOfWork;
-        private readonly ILogger logger;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger _logger;
 
         public SurveyReportService(
             IUnitOfWork UnitOfWork,
             ILogger<SurveyReportService> logger)
         {
-            this.unitOfWork = UnitOfWork;
-            this.logger = logger;
+            _unitOfWork = UnitOfWork;
+            _logger = logger;
         }
 
         public IEnumerable<SurveyReport> GetAll(int companyId, int surveyId, string? userId, string? role)
         {
-            this.PropertyValidator(companyId, surveyId);
+            PropertyValidator(companyId, surveyId);
 
             bool isAdmin = role == AdminHelper.Admin;
 
             var dbCompany = isAdmin
-            ? this.unitOfWork.CompanyRepository.GetAll().FirstOrDefault(x => x.CompanyID == companyId && x.User.Id == userId)
-            : this.unitOfWork.CompanyRepository.GetByID(companyId);
+            ? _unitOfWork.CompanyRepository.GetAll().FirstOrDefault(x => x.CompanyID == companyId && x.User.Id == userId)
+            : _unitOfWork.CompanyRepository.GetByID(companyId);
             if (dbCompany == null)
             {
                 throw new CustomException.CustomException(CustomException.ErrorResponseCode.NoResultsOrUserMismatch);
             }
 
             // COMPANY SURVEY RELATIONSHIP CHECK
-            var resultSurveyCompany = this.unitOfWork.SurveysRepository.GetAll().FirstOrDefault(p => p.SurveyID == surveyId && p.CompanyID == companyId);
+            var resultSurveyCompany = _unitOfWork.SurveysRepository.GetAll().FirstOrDefault(p => p.SurveyID == surveyId && p.CompanyID == companyId);
             if (resultSurveyCompany == null)
             {
-                this.logger.LogError($"Error occurred: {CustomException.ErrorResponseCode.RelationshipCompanySurvey}");
+                _logger.LogError($"Error occurred: {CustomException.ErrorResponseCode.RelationshipCompanySurvey}");
                 throw new CustomException.CustomException(CustomException.ErrorResponseCode.RelationshipCompanySurvey);
             }
 
             var result = isAdmin
-                ? this.unitOfWork.SurveyReportRepository.GetAll().Include("SurveyReportData").Where(p => p.SurveyID == surveyId)
-                : this.unitOfWork.SurveyReportRepository.GetAll().Include("SurveyReportData");
+                ? _unitOfWork.SurveyReportRepository.GetAll().Include("SurveyReportData").Where(p => p.SurveyID == surveyId)
+                : _unitOfWork.SurveyReportRepository.GetAll().Include("SurveyReportData");
 
             return result;
         }
@@ -56,32 +57,32 @@
 
             if (surveyReportId <= 0)
             {
-                this.logger.LogError($"Error occurred: {CustomException.ErrorResponseCode.SurveyReportIDValidation}");
+                _logger.LogError($"Error occurred: {CustomException.ErrorResponseCode.SurveyReportIDValidation}");
                 throw new CustomException.CustomException(CustomException.ErrorResponseCode.SurveyReportIDValidation);
             }
 
-            this.PropertyValidator(companyId, surveyId);
+            PropertyValidator(companyId, surveyId);
 
             // USER AND COMPANY CHECK
             var dbCompany = isAdmin
-            ? this.unitOfWork.CompanyRepository.GetAll().FirstOrDefault(x => x.CompanyID == companyId && x.User.Id == userId)
-            : this.unitOfWork.CompanyRepository.GetByID(companyId);
+            ? _unitOfWork.CompanyRepository.GetAll().FirstOrDefault(x => x.CompanyID == companyId && x.User.Id == userId)
+            : _unitOfWork.CompanyRepository.GetByID(companyId);
             if (dbCompany == null)
             {
                 throw new CustomException.CustomException(CustomException.ErrorResponseCode.NoResultsOrUserMismatch);
             }
 
             // COMPANY SURVEY RELATIONSHIP CHECK
-            var resultSurveyCompany = this.unitOfWork.SurveysRepository.GetAll().FirstOrDefault(p => p.SurveyID == surveyId && p.CompanyID == companyId);
+            var resultSurveyCompany = _unitOfWork.SurveysRepository.GetAll().FirstOrDefault(p => p.SurveyID == surveyId && p.CompanyID == companyId);
             if (resultSurveyCompany == null)
             {
-                this.logger.LogError($"Error occurred: {CustomException.ErrorResponseCode.RelationshipCompanySurvey}");
+                _logger.LogError($"Error occurred: {CustomException.ErrorResponseCode.RelationshipCompanySurvey}");
                 throw new CustomException.CustomException(CustomException.ErrorResponseCode.RelationshipCompanySurvey);
             }
 
             var result = isAdmin
-                    ? this.unitOfWork.SurveyReportRepository.GetAll().FirstOrDefault(p => p.SurveyID == surveyId && p.SurveyReportID == surveyReportId)
-                    : this.unitOfWork.SurveyReportRepository.GetByID(surveyReportId);
+                    ? _unitOfWork.SurveyReportRepository.GetAll().FirstOrDefault(p => p.SurveyID == surveyId && p.SurveyReportID == surveyReportId)
+                    : _unitOfWork.SurveyReportRepository.GetByID(surveyReportId);
             if (result == null)
             {
                 throw new CustomException.CustomException(CustomException.ErrorResponseCode.SurveyReportNotExistant);
@@ -95,36 +96,36 @@
             try
             {
 
-                var result = new SurveyReportCreationValidator(this.unitOfWork, companyId, surveyId).Validate(surveyReport);
+                var result = new SurveyReportCreationValidator(_unitOfWork, companyId, surveyId).Validate(surveyReport);
                 if (!result.IsValid)
                 {
-                    throw new CustomException.CustomException(String.Join(",\n", result.Errors.Select(x => x.ErrorMessage)));
+                    throw new CustomException.CustomException(string.Join(",\n", result.Errors.Select(x => x.ErrorMessage)));
                 }
 
 
                 var dbCompany = role == AdminHelper.Admin
-                    ? this.unitOfWork.CompanyRepository.GetAll().FirstOrDefault(x => x.CompanyID == companyId && x.User.Id == userId)
-                    : this.unitOfWork.CompanyRepository.GetByID(companyId);
+                    ? _unitOfWork.CompanyRepository.GetAll().FirstOrDefault(x => x.CompanyID == companyId && x.User.Id == userId)
+                    : _unitOfWork.CompanyRepository.GetByID(companyId);
 
                 if (dbCompany == null)
                 {
-                    this.logger.LogError($"Error occurred: {CustomException.ErrorResponseCode.UserDoesNotMatch}");
+                    _logger.LogError($"Error occurred: {CustomException.ErrorResponseCode.UserDoesNotMatch}");
                     throw new CustomException.CustomException(CustomException.ErrorResponseCode.UserDoesNotMatch);
                 }
 
-                var surveyCheck = this.unitOfWork.SurveysRepository.GetByID(surveyId);
+                var surveyCheck = _unitOfWork.SurveysRepository.GetByID(surveyId);
 
                 surveyReport.SurveyID = surveyCheck.SurveyID;
                 surveyReport.CreateDate = surveyCheck.CreateDate;
 
-                this.unitOfWork.SurveyReportRepository.Add(surveyReport);
-                await this.unitOfWork.SaveChangesAsync();
+                _unitOfWork.SurveyReportRepository.Add(surveyReport);
+                await _unitOfWork.SaveChangesAsync();
 
                 return surveyReport;
             }
             catch (Exception ex)
             {
-                this.logger.LogError($"Error occurred: {ex}");
+                _logger.LogError($"Error occurred: {ex}");
                 if (ex is CustomException.CustomException) throw ex;
                 throw new CustomException.CustomException(CustomException.ErrorResponseCode.GlobalError);
             }
@@ -136,7 +137,7 @@
             {
                 if (surveyReportId == 0)
                 {
-                    this.logger.LogError($"Error occured: {CustomException.ErrorResponseCode.SurveyReportIDBelowOrEqualToZero}");
+                    _logger.LogError($"Error occured: {CustomException.ErrorResponseCode.SurveyReportIDBelowOrEqualToZero}");
                     throw new CustomException.CustomException(CustomException.ErrorResponseCode.SurveyReportIDBelowOrEqualToZero);
                 }
 
@@ -144,45 +145,45 @@
 
                 if (surveyReportId <= 0)
                 {
-                    this.logger.LogError($"Error occurred: {CustomException.ErrorResponseCode.SurveyReportIDValidation}");
+                    _logger.LogError($"Error occurred: {CustomException.ErrorResponseCode.SurveyReportIDValidation}");
                     throw new CustomException.CustomException(CustomException.ErrorResponseCode.SurveyReportIDValidation);
                 }
 
-                this.PropertyValidator(companyId, surveyId);
+                PropertyValidator(companyId, surveyId);
 
                 // USER AND COMPANY CHECK
                 var dbCompany = isAdmin
-                ? this.unitOfWork.CompanyRepository.GetAll().FirstOrDefault(x => x.CompanyID == companyId && x.User.Id == userId)
-                : this.unitOfWork.CompanyRepository.GetByID(companyId);
+                ? _unitOfWork.CompanyRepository.GetAll().FirstOrDefault(x => x.CompanyID == companyId && x.User.Id == userId)
+                : _unitOfWork.CompanyRepository.GetByID(companyId);
                 if (dbCompany == null)
                 {
                     throw new CustomException.CustomException(CustomException.ErrorResponseCode.NoResultsOrUserMismatch);
                 }
 
                 // COMPANY SURVEY RELATIONSHIP CHECK
-                var resultSurveyCompany = this.unitOfWork.SurveysRepository.GetAll().FirstOrDefault(p => p.SurveyID == surveyId && p.CompanyID == companyId);
+                var resultSurveyCompany = _unitOfWork.SurveysRepository.GetAll().FirstOrDefault(p => p.SurveyID == surveyId && p.CompanyID == companyId);
                 if (resultSurveyCompany == null)
                 {
-                    this.logger.LogError($"Error occurred: {CustomException.ErrorResponseCode.RelationshipCompanySurvey}");
+                    _logger.LogError($"Error occurred: {CustomException.ErrorResponseCode.RelationshipCompanySurvey}");
                     throw new CustomException.CustomException(CustomException.ErrorResponseCode.RelationshipCompanySurvey);
                 }
 
                 var result = isAdmin
-                        ? this.unitOfWork.SurveyReportRepository.GetAll().FirstOrDefault(p => p.SurveyID == surveyId && p.SurveyReportID == surveyReportId)
-                        : this.unitOfWork.SurveyReportRepository.GetByID(surveyReportId);
+                        ? _unitOfWork.SurveyReportRepository.GetAll().FirstOrDefault(p => p.SurveyID == surveyId && p.SurveyReportID == surveyReportId)
+                        : _unitOfWork.SurveyReportRepository.GetByID(surveyReportId);
                 if (result == null)
                 {
                     throw new CustomException.CustomException(CustomException.ErrorResponseCode.SurveyReportNotExistant);
                 }
 
-                this.unitOfWork.SurveyReportRepository.Delete(result);
-                await this.unitOfWork.SaveChangesAsync();
+                _unitOfWork.SurveyReportRepository.Delete(result);
+                await _unitOfWork.SaveChangesAsync();
 
                 return true;
             }
             catch (Exception ex)
             {
-                this.logger.LogError(ex, $"Error occurred: {ex.Message}");
+                _logger.LogError(ex, $"Error occurred: {ex.Message}");
                 if (ex is CustomException.CustomException) throw ex;
 
                 throw new CustomException.CustomException(CustomException.ErrorResponseCode.GlobalError);
@@ -194,35 +195,35 @@
             try
             {
 
-                var result = new SurveyReportUpdateValidator(this.unitOfWork, companyId, surveyId, surveyReportId).Validate(surveyReport);
+                var result = new SurveyReportUpdateValidator(_unitOfWork, companyId, surveyId, surveyReportId).Validate(surveyReport);
                 if (!result.IsValid)
                 {
-                    throw new CustomException.CustomException(String.Join(",\n", result.Errors.Select(x => x.ErrorMessage)));
+                    throw new CustomException.CustomException(string.Join(",\n", result.Errors.Select(x => x.ErrorMessage)));
                 }
 
 
                 var dbCompany = role == AdminHelper.Admin
-                    ? this.unitOfWork.CompanyRepository.GetAll().FirstOrDefault(x => x.CompanyID == companyId && x.User.Id == userId)
-                    : this.unitOfWork.CompanyRepository.GetByID(companyId);
+                    ? _unitOfWork.CompanyRepository.GetAll().FirstOrDefault(x => x.CompanyID == companyId && x.User.Id == userId)
+                    : _unitOfWork.CompanyRepository.GetByID(companyId);
 
                 if (dbCompany == null)
                 {
-                    this.logger.LogError($"Error occurred: {CustomException.ErrorResponseCode.UserDoesNotMatch}");
+                    _logger.LogError($"Error occurred: {CustomException.ErrorResponseCode.UserDoesNotMatch}");
                     throw new CustomException.CustomException(CustomException.ErrorResponseCode.UserDoesNotMatch);
                 }
 
-                var dbSurveyReport = this.unitOfWork.SurveyReportRepository.GetByID(surveyReportId);
+                var dbSurveyReport = _unitOfWork.SurveyReportRepository.GetByID(surveyReportId);
 
                 dbSurveyReport.IsCompleted = surveyReport.IsCompleted;
 
-                this.unitOfWork.SurveyReportRepository.Update(dbSurveyReport);
-                await this.unitOfWork.SaveChangesAsync();
+                _unitOfWork.SurveyReportRepository.Update(dbSurveyReport);
+                await _unitOfWork.SaveChangesAsync();
 
                 return dbSurveyReport;
             }
             catch (Exception ex)
             {
-                this.logger.LogError($"Error occurred: {ex}");
+                _logger.LogError($"Error occurred: {ex}");
                 if (ex is CustomException.CustomException) throw ex;
                 throw new CustomException.CustomException(CustomException.ErrorResponseCode.GlobalError);
             }
@@ -233,13 +234,13 @@
 
             if (companyId <= 0)
             {
-                this.logger.LogError($"Error occurred: {CustomException.ErrorResponseCode.CompanyIDBelowOrEqualToZero}");
+                _logger.LogError($"Error occurred: {CustomException.ErrorResponseCode.CompanyIDBelowOrEqualToZero}");
                 throw new CustomException.CustomException(CustomException.ErrorResponseCode.CompanyIDBelowOrEqualToZero);
             }
 
             if (surveyId <= 0)
             {
-                this.logger.LogError($"Error occurred: {CustomException.ErrorResponseCode.SurveyIDBelowOrEqualToZero}");
+                _logger.LogError($"Error occurred: {CustomException.ErrorResponseCode.SurveyIDBelowOrEqualToZero}");
                 throw new CustomException.CustomException(CustomException.ErrorResponseCode.SurveyIDBelowOrEqualToZero);
             }
         }

@@ -45,7 +45,7 @@ namespace Survey.Infrastructure.ContextClass1
             modelBuilder.ApplyConfiguration(new CompanyCascadeDelete());
             modelBuilder.ApplyConfiguration(new AswerCascadeDelete());
             modelBuilder.ApplyConfiguration(new AnswerBlockCascadeDelete());
-            this.SeedUser(modelBuilder);
+            SeedUser(modelBuilder);
         }
 
         private void SeedUser(ModelBuilder modelBuilder)

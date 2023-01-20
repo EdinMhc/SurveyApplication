@@ -4,7 +4,7 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Survey.API.DTOs.Company;
-    using Survey.Domain.Services.CompanyService;
+    using Survey.Domain.Services.Interfaces;
     using Survey.Infrastructure.Entities;
 
     [Authorize]

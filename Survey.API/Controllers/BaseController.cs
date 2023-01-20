@@ -12,10 +12,7 @@ namespace Survey.API.Controllers
         public BaseController(IHttpContextAccessor contextAccessor)
         {
             string userId = GeneralExtensions.GetUserId(contextAccessor.HttpContext);
-
             string role = contextAccessor.HttpContext.GetRole();
-
-            //string role = User.IsInRole(AdminHelper.Admin) ? AdminHelper.Admin : AdminHelper.SuperAdmin;
             UserInfo = (userId, role);
             _contextAccessor = contextAccessor;
         }

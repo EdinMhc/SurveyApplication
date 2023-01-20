@@ -13,7 +13,7 @@
 
         public Authorize2Attribute(params string[] roles)
         {
-            this.roles = roles ?? new string[] { };
+            roles = roles ?? new string[] { };
         }
 
         public void OnAuthorization(AuthorizationFilterContext context)
@@ -29,7 +29,7 @@
             var user = context.HttpContext.User;
             var userRole = context.HttpContext.User.Claims.Single(x => x.Type == ClaimTypes.Role).Value;
 
-            if (userRole == null || (this.roles.Any() && !this.roles.Contains(userRole)))
+            if (userRole == null || (roles.Any() && !roles.Contains(userRole)))
             {
                 // Role is not valid
                 context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };

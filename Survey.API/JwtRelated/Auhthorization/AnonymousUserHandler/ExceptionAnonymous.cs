@@ -16,7 +16,7 @@
 
         public ExceptionAnonymous(string message, string unauthorized) : this(message)
         {
-            this.Unauthorized = unauthorized;
+            Unauthorized = unauthorized;
         }
     }
 }

@@ -11,13 +11,13 @@
 
         public Repository(ContextClass context)
         {
-            this._context = context;
-            this.entities = this._context.Set<T>();
+            _context = context;
+            entities = _context.Set<T>();
         }
 
         public IQueryable<T> GetAll()
         {
-            return this.entities.AsQueryable();
+            return entities.AsQueryable();
         }
 
         public T GetByID(object id)
@@ -27,28 +27,28 @@
 
         public IEnumerable<TType> Get<TType>(Expression<Func<T, bool>> where, Expression<Func<T, TType>> select) where TType : class
         {
-            return this.entities.Where(where).Select(select).ToList();
+            return entities.Where(where).Select(select).ToList();
         }
 
         public void Add(T entity)
         {
-            this.entities.Add(entity);
+            entities.Add(entity);
         }
 
         public void Update(T entity)
         {
-            this.entities.Attach(entity);
-            this._context.Entry(entity).State = EntityState.Modified;
+            entities.Attach(entity);
+            _context.Entry(entity).State = EntityState.Modified;
         }
 
         public void Delete(T entity)
         {
-            this.entities.Remove(entity);
+            entities.Remove(entity);
         }
 
         public async Task<bool> ExistsAsync(int companyId)
         {
-            return await this._context.Company.AnyAsync(c => c.CompanyID == companyId);
+            return await _context.Company.AnyAsync(c => c.CompanyID == companyId);
         }
     }
 }

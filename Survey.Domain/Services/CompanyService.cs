@@ -1,12 +1,13 @@
-﻿using FluentValidation;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Survey.Domain.CustomException;
 using Survey.Domain.Services.FluentValidation.Company;
-using Survey.Domain.Services.Helper_Admin;
+using Survey.Domain.Services.Interfaces;
 using Survey.Infrastructure.Entities;
 using Survey.Infrastructure.Repositories;
+using System.ComponentModel.DataAnnotations;
 
-namespace Survey.Domain.Services.CompanyService
+namespace Survey.Domain.Services
 {
 
     public class CompanyService : ICompanyService
@@ -38,8 +39,8 @@ namespace Survey.Domain.Services.CompanyService
 
             if (dbCompany == null)
             {
-                _logger.LogError($"Error occurred: {CustomException.ErrorResponseCode.NoResultsOrUserMismatch}");
-                throw new CustomException.CustomException(CustomException.ErrorResponseCode.NoResultsOrUserMismatch);
+                _logger.LogError($"Error occurred: {ErrorResponseCode.NoResultsOrUserMismatch}");
+                throw new CustomException.CustomException(ErrorResponseCode.NoResultsOrUserMismatch);
             }
 
             return dbCompany;
@@ -61,7 +62,7 @@ namespace Survey.Domain.Services.CompanyService
 
                 if (id <= 0)
                 {
-                    throw new CustomException.CustomException(CustomException.ErrorResponseCode.CompanyIDBelowOrEqualToZero);
+                    throw new CustomException.CustomException(ErrorResponseCode.CompanyIDBelowOrEqualToZero);
                 }
 
                 var dbCompany = isAdmin
@@ -69,8 +70,8 @@ namespace Survey.Domain.Services.CompanyService
                     : _unitOfWork.CompanyRepository.GetAll().Include("Surveys").FirstOrDefault(x => x.CompanyID == id);
                 if (dbCompany == null)
                 {
-                    _logger.LogError($"Error occurred: {CustomException.ErrorResponseCode.NoResultsOrUserMismatch}");
-                    throw new CustomException.CustomException(CustomException.ErrorResponseCode.NoResultsOrUserMismatch);
+                    _logger.LogError($"Error occurred: {ErrorResponseCode.NoResultsOrUserMismatch}");
+                    throw new CustomException.CustomException(ErrorResponseCode.NoResultsOrUserMismatch);
                 }
 
                 return dbCompany;
@@ -79,7 +80,7 @@ namespace Survey.Domain.Services.CompanyService
             {
                 _logger.LogError($"Error occurred: {ex}");
                 if (ex is CustomException.CustomException) throw ex;
-                throw new CustomException.CustomException(CustomException.ErrorResponseCode.GlobalError);
+                throw new CustomException.CustomException(ErrorResponseCode.GlobalError);
             }
         }
 
@@ -98,7 +99,7 @@ namespace Survey.Domain.Services.CompanyService
                 var result = new CompanyValidator(_unitOfWork).Validate(company);
                 if (!result.IsValid)
                 {
-                    throw new CustomException.CustomException(String.Join(",\n", result.Errors.Select(x => x.ErrorMessage)));
+                    throw new CustomException.CustomException(string.Join(",\n", result.Errors.Select(x => x.ErrorMessage)));
                 }
 
                 var userCheck = _unitOfWork.UserRepository.GetByID(userId);
@@ -115,7 +116,7 @@ namespace Survey.Domain.Services.CompanyService
                 _logger.LogError($"Error occurred: {ex}");
                 if (ex is CustomException.CustomException) throw ex;
                 if (ex is ValidationException) throw ex;
-                throw new CustomException.CustomException(CustomException.ErrorResponseCode.GlobalError);
+                throw new CustomException.CustomException(ErrorResponseCode.GlobalError);
             }
 
         }
@@ -135,7 +136,7 @@ namespace Survey.Domain.Services.CompanyService
                 bool isAdmin = role == AdminHelper.Admin;
                 if (id <= 0)
                 {
-                    throw new CustomException.CustomException(CustomException.ErrorResponseCode.CompanyIDBelowOrEqualToZero);
+                    throw new CustomException.CustomException(ErrorResponseCode.CompanyIDBelowOrEqualToZero);
                 }
 
                 var dbCompany = isAdmin
@@ -144,8 +145,8 @@ namespace Survey.Domain.Services.CompanyService
 
                 if (dbCompany == null)
                 {
-                    _logger.LogError($"Error occurred: {CustomException.ErrorResponseCode.NoResultsOrUserMismatch}");
-                    throw new CustomException.CustomException(CustomException.ErrorResponseCode.NoResultsOrUserMismatch);
+                    _logger.LogError($"Error occurred: {ErrorResponseCode.NoResultsOrUserMismatch}");
+                    throw new CustomException.CustomException(ErrorResponseCode.NoResultsOrUserMismatch);
                 }
 
                 _unitOfWork.CompanyRepository.Delete(dbCompany);
@@ -158,7 +159,7 @@ namespace Survey.Domain.Services.CompanyService
                 _logger.LogError($"Error occurred: {ex}");
                 if (ex is CustomException.CustomException) throw ex;
 
-                throw new CustomException.CustomException(CustomException.ErrorResponseCode.GlobalError);
+                throw new CustomException.CustomException(ErrorResponseCode.GlobalError);
             }
         }
 
@@ -180,7 +181,7 @@ namespace Survey.Domain.Services.CompanyService
                 var result = new UpdateValidatorCompany(_unitOfWork, companyId).Validate(company);
                 if (!result.IsValid)
                 {
-                    throw new CustomException.CustomException(String.Join(",\n", result.Errors.Select(x => x.ErrorMessage)));
+                    throw new CustomException.CustomException(string.Join(",\n", result.Errors.Select(x => x.ErrorMessage)));
                 }
 
                 var dbCompany = isAdmin
@@ -189,8 +190,8 @@ namespace Survey.Domain.Services.CompanyService
 
                 if (dbCompany == null)
                 {
-                    _logger.LogError($"Error occurred: {CustomException.ErrorResponseCode.NoResultsOrUserMismatch}");
-                    throw new CustomException.CustomException(CustomException.ErrorResponseCode.NoResultsOrUserMismatch);
+                    _logger.LogError($"Error occurred: {ErrorResponseCode.NoResultsOrUserMismatch}");
+                    throw new CustomException.CustomException(ErrorResponseCode.NoResultsOrUserMismatch);
                 }
 
                 dbCompany.CompanyName = !string.IsNullOrWhiteSpace(company.CompanyName) ? company.CompanyName : dbCompany.CompanyName;
@@ -206,7 +207,7 @@ namespace Survey.Domain.Services.CompanyService
             {
                 _logger.LogError($"Error occurred: {ex}");
                 if (ex is CustomException.CustomException) throw ex;
-                throw new CustomException.CustomException(CustomException.ErrorResponseCode.GlobalError);
+                throw new CustomException.CustomException(ErrorResponseCode.GlobalError);
             }
         }
     }

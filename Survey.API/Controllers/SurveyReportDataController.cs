@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Survey.API.DTOs.SurveyReportData;
-using Survey.Domain.Services.SurveyReportDataService;
+using Survey.Domain.Services.Interfaces;
 using Survey.Infrastructure.Entities;
 
 namespace Survey.API.Controllers

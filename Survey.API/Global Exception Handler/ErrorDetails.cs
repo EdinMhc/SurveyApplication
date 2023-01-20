@@ -14,8 +14,8 @@
 
         public ErrorDetails(ErrorResponseCode statusCode, string message)
         {
-            this.StatusCode = (int)statusCode;
-            this.Message = message;
+            StatusCode = (int)statusCode;
+            Message = message;
         }
 
         public override string ToString()

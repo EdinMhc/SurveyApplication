@@ -7,70 +7,70 @@
 
     public class SurveyReportDataValidator : AbstractValidator<SurveyReportData>
     {
-        private readonly int companyId;
-        private readonly int surveyId;
-        private readonly int surveyReportId;
-        private readonly int respondentId;
-        private IUnitOfWork unitOfWork;
-        private ValidationResult result;
+        private readonly int CompanyId;
+        private readonly int SurveyId;
+        private readonly int SurveyReportId;
+        private readonly int RespondentId;
+        private IUnitOfWork _unitOfWork;
+        private ValidationResult _result;
 
         public SurveyReportDataValidator(IUnitOfWork unitOfWork, int companyId, int surveyId, int surveyReportId, int respondentId)
         {
-            this.companyId = companyId;
-            this.surveyId = surveyId;
-            this.surveyReportId = surveyReportId;
-            this.respondentId = respondentId;
-            this.unitOfWork = unitOfWork;
-            this.result = new ValidationResult();
+            CompanyId = companyId;
+            SurveyId = surveyId;
+            SurveyReportId = surveyReportId;
+            RespondentId = respondentId;
+            _unitOfWork = unitOfWork;
+            _result = new ValidationResult();
         }
 
         public override ValidationResult Validate(ValidationContext<SurveyReportData> context)
         {
-            this.result = base.Validate(context);
-            this.ValidateCompany();
-            this.ValidateSurvey();
-            this.ValidateSurveyReport();
-            this.ValidateSurveyReportData();
+            _result = base.Validate(context);
+            ValidateCompany();
+            ValidateSurvey();
+            ValidateSurveyReport();
+            ValidateSurveyReportData();
 
-            return this.result;
+            return _result;
         }
 
         private void ValidateCompany()
         {
-            if (this.companyId == 0)
+            if (CompanyId == 0)
             {
-                this.result.Errors.Add(new ValidationFailure("CompanyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.CompanyIDBelowOrEqualToZero]));
+                _result.Errors.Add(new ValidationFailure("CompanyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.CompanyIDBelowOrEqualToZero]));
             }
         }
 
         private void ValidateSurvey()
         {
-            if (this.surveyId == 0)
+            if (SurveyId == 0)
             {
-                this.result.Errors.Add(new ValidationFailure("SurveyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.SurveyIDBelowOrEqualToZero]));
+                _result.Errors.Add(new ValidationFailure("SurveyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.SurveyIDBelowOrEqualToZero]));
             }
 
-            var resultSurveyCompany = this.unitOfWork.SurveysRepository.GetAll().FirstOrDefault(p => p.SurveyID == this.surveyId && p.CompanyID == this.companyId);
+            var resultSurveyCompany = _unitOfWork.SurveysRepository.GetAll().FirstOrDefault(p => p.SurveyID == SurveyId && p.CompanyID == CompanyId);
             if (resultSurveyCompany == null)
             {
-                this.result.Errors.Add(new ValidationFailure("SurveyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.RelationshipCompanySurvey]));
+                _result.Errors.Add(new ValidationFailure("SurveyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.RelationshipCompanySurvey]));
             }
         }
 
         private void ValidateSurveyReport()
         {
-            if (this.surveyReportId == 0)
+            if (SurveyReportId == 0)
             {
-                this.result.Errors.Add(new ValidationFailure("SurveyReportId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.SurveyIDBelowOrEqualToZero]));
+                _result.Errors.Add(new ValidationFailure("SurveyReportId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.SurveyIDBelowOrEqualToZero]));
             }
 
-            var dbSurveyReport = this.unitOfWork.SurveyReportRepository.GetAll().FirstOrDefault(p => p.SurveyID == this.surveyId && p.SurveyReportID == this.surveyReportId);
+            var dbSurveyReport = _unitOfWork.SurveyReportRepository.GetAll().FirstOrDefault(p => p.SurveyID == SurveyId && p.SurveyReportID == SurveyReportId);
             if (dbSurveyReport == null)
             {
-                this.result.Errors.Add(new ValidationFailure("SurveyReportId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.SurveyReportNotExistant]));
+                _result.Errors.Add(new ValidationFailure("SurveyReportId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.SurveyReportNotExistant]));
             }
 
-            var resultSurveyReportCompany = this.unitOfWork.SurveyReportDataRepository.GetAll().FirstOrDefault(p => p.SurveyReportID == this.surveyReportId);
+            var resultSurveyReportCompany = _unitOfWork.SurveyReportDataRepository.GetAll().FirstOrDefault(p => p.SurveyReportID == SurveyReportId);
             if (resultSurveyReportCompany == null)
             {
                 throw new CustomException.CustomException(CustomException.ErrorResponseCode.RelationshipSurveySurvey);
@@ -79,9 +79,9 @@
 
         private void ValidateSurveyReportData()
         {
-            if (this.respondentId <= 0)
+            if (RespondentId <= 0)
             {
-                this.result.Errors.Add(new ValidationFailure("SurveyReportDataId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.SurveyReportDataIDBelowOrEqualToZero]));
+                _result.Errors.Add(new ValidationFailure("SurveyReportDataId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.SurveyReportDataIDBelowOrEqualToZero]));
             }
         }
     }

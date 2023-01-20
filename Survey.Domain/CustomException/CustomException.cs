@@ -8,15 +8,15 @@
 
         public CustomException(ErrorResponseCode responseCode)
         {
-            this.ResponseCodeStatus = (int)responseCode;
-            this.ErrorMessage = Errors.GetValueOrDefault(responseCode, "Error occurred");
+            ResponseCodeStatus = (int)responseCode;
+            ErrorMessage = Errors.GetValueOrDefault(responseCode, "Error occurred");
         }
 
         public CustomException(string validationMEssage)
         {
 
-            this.ResponseCodeStatus = (int)ErrorResponseCode.ValidationError;
-            this.ErrorMessage = validationMEssage;
+            ResponseCodeStatus = (int)ErrorResponseCode.ValidationError;
+            ErrorMessage = validationMEssage;
 
         }
 

@@ -8,24 +8,24 @@
     public class CompanyValidator : AbstractValidator<Company>
     {
 
-        private IUnitOfWork unitOfWork;
-        private ValidationResult result;
+        private IUnitOfWork _unitOfWork;
+        private ValidationResult _result;
 
         public CompanyValidator(IUnitOfWork unitOfWork)
         {
 
-            this.result = new ValidationResult();
-            this.unitOfWork = unitOfWork;
+            _result = new ValidationResult();
+            _unitOfWork = unitOfWork;
 
-            this.RuleFor(x => x.CompanyName)
+            RuleFor(x => x.CompanyName)
                 .NotEmpty()
                 .Length(2, 255)
                 .NotNull();
-            this.RuleFor(x => x.Address)
+            RuleFor(x => x.Address)
                 .NotEmpty()
                 .Length(2, 255)
                 .NotNull();
-            this.RuleFor(x => x.Email)
+            RuleFor(x => x.Email)
                 .NotEmpty()
                 .NotNull()
                 .Length(5, 255)
@@ -34,10 +34,9 @@
 
         public override ValidationResult Validate(ValidationContext<Company> context)
         {
-            this.result = base.Validate(context);
-            //this.ValidateUser();
+            _result = base.Validate(context);
 
-            return this.result;
+            return _result;
         }
     }
 }

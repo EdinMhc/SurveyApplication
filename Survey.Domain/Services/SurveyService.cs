@@ -2,11 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Survey.Domain.Services.FluentValidation.Survey;
-using Survey.Domain.Services.Helper_Admin;
+using Survey.Domain.Services.Interfaces;
 using Survey.Infrastructure.Entities;
 using Survey.Infrastructure.Repositories;
 
-namespace Survey.Domain.Services.SurveyService
+namespace Survey.Domain.Services
 {
 
     public class SurveyService : ISurveyService
@@ -114,7 +114,7 @@ namespace Survey.Domain.Services.SurveyService
                 var result = new SurveyValidator(_unitOfWork, companyId, userId).Validate(survey);
                 if (!result.IsValid)
                 {
-                    throw new CustomException.CustomException(String.Join(",\n", result.Errors.Select(x => x.ErrorMessage)));
+                    throw new CustomException.CustomException(string.Join(",\n", result.Errors.Select(x => x.ErrorMessage)));
                 }
 
                 var dbCompany = isAdmin
@@ -216,7 +216,7 @@ namespace Survey.Domain.Services.SurveyService
                 var result = new SurveyUpdateValidator(_unitOfWork, companyId, userId, surveyId).Validate(survey);
                 if (!result.IsValid)
                 {
-                    throw new CustomException.CustomException(String.Join(",\n", result.Errors.Select(x => x.ErrorMessage)));
+                    throw new CustomException.CustomException(string.Join(",\n", result.Errors.Select(x => x.ErrorMessage)));
                 }
 
                 var dbCompany = isAdmin

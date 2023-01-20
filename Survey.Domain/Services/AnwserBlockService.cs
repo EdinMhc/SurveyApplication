@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.Logging;
 using Survey.Domain.Services.FluentValidation.AnswerBlock;
-using Survey.Domain.Services.Helper_Admin;
+using Survey.Domain.Services.Interfaces;
 using Survey.Infrastructure.Entities;
 using Survey.Infrastructure.Repositories;
 
-namespace Survey.Domain.Services.AnwserBlockService
+namespace Survey.Domain.Services
 {
 
     public class AnwserBlockService : IAnwserBlockService
@@ -104,7 +104,7 @@ namespace Survey.Domain.Services.AnwserBlockService
                 var result = new AnswerBlockCreationValidation(_unitOfWork, companyId, surveyId).Validate(anwserBlock);
                 if (!result.IsValid)
                 {
-                    throw new CustomException.CustomException(String.Join(",\n", result.Errors.Select(x => x.ErrorMessage)));
+                    throw new CustomException.CustomException(string.Join(",\n", result.Errors.Select(x => x.ErrorMessage)));
                 }
 
                 // User Check
@@ -193,7 +193,7 @@ namespace Survey.Domain.Services.AnwserBlockService
                 var result = new AnswerBlockUpdateValidation(_unitOfWork, companyId, surveyId, anwserBlockId).Validate(anwserBlock);
                 if (!result.IsValid)
                 {
-                    throw new CustomException.CustomException(String.Join(",\n", result.Errors.Select(x => x.ErrorMessage)));
+                    throw new CustomException.CustomException(string.Join(",\n", result.Errors.Select(x => x.ErrorMessage)));
                 }
 
                 // Checking user and role

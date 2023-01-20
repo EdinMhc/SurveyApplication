@@ -7,10 +7,10 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Exceptions;
 using Serilog.Sinks.Elasticsearch;
+using Survey.API;
 using Survey.API.Dapper;
 using Survey.API.Global_Exception_Handler;
 using Survey.API.JwtRelated.Auhthorization.AnonymousUserHandler;
-using Survey.Domain.Services.CompanyService;
 using Survey.Domain.Services.IdentityService.Options;
 using Survey.Infrastructure.ContextClass1;
 using Survey.Infrastructure.Entities;
@@ -53,25 +53,7 @@ builder.Services.AddIdentityCore<User>()
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<ContextClass>();
 
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-builder.Services.AddScoped<ICompanyService, CompanyService>();
-
-builder.Services.AddScoped<Survey.Domain.Services.SurveyService.ISurveyService, Survey.Domain.Services.SurveyService.SurveyService>();
-
-builder.Services.AddScoped<Survey.Domain.Services.SurveyReport_Service.ISurveyReportService, Survey.Domain.Services.SurveyReport_Service.SurveyReportService>();
-
-builder.Services.AddScoped<Survey.Domain.Services.QuestionService.IQuestionService, Survey.Domain.Services.QuestionService.QuestionService>();
-
-builder.Services.AddScoped<Survey.Domain.Services.AnwserBlockService.IAnwserBlockService, Survey.Domain.Services.AnwserBlockService.AnwserBlockService>();
-
-builder.Services.AddScoped<Survey.Domain.Services.AnwserService.IAnswerService, Survey.Domain.Services.AnwserService.AnswerService>();
-
-builder.Services.AddScoped<Survey.Domain.Services.SurveyReportDataService.ISurveyReportDataService, Survey.Domain.Services.SurveyReportDataService.SurveyReportDataService>();
-
-builder.Services.AddScoped<Survey.Domain.Services.IdentityService.Interfaces.IIdentityService, Survey.Domain.Services.IdentityService.IdentityService>();
-
-builder.Services.AddHttpContextAccessor();
+builder.Services.AddDependencyInjections();
 
 builder.Services.AddIdentity<User, IdentityRole>(o =>
 {
@@ -162,7 +144,7 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
-builder.Services.AddInfrastructure();
+builder.Services.AddDapperDependency();
 
 builder.Services.AddAuthorization(options =>
 {

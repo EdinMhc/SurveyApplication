@@ -1,46 +1,43 @@
-﻿namespace Survey.Domain.Services.IdentityService
-{
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.IdentityModel.Tokens;
-    using Survey.Domain.Services.IdentityService.Interfaces;
-    using Survey.Domain.Services.IdentityService.Options;
-    using Survey.Domain.Services.IdentityService.Requests;
-    using Survey.Infrastructure.ContextClass1;
-    using Survey.Infrastructure.Entities;
-    using Survey.Infrastructure.Entities.JwtRelated;
-    using Survey.Infrastructure.Repositories;
-    using System.IdentityModel.Tokens.Jwt;
-    using System.Security.Claims;
-    using System.Text;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using Survey.Infrastructure.ContextClass1;
+using Survey.Infrastructure.Entities;
+using Survey.Infrastructure.Entities.JwtRelated;
+using Survey.Infrastructure.Repositories;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
-    public class IdentityService : IIdentityService
+namespace Survey.Domain.Services.IdentityService
+{
+    public class IdentityService : Services.IdentityService.Interfaces.IIdentityService
     {
-        private readonly UserManager<User> userManager;
-        private readonly JwtSettings jwtSettings;
-        private readonly TokenValidationParameters tokenValidationParameters;
-        private readonly ContextClass dataContext;
-        private readonly IUnitOfWork unitOfWork;
+        private readonly UserManager<User> _userManager;
+        private readonly Options.JwtSettings _jwtSettings;
+        private readonly TokenValidationParameters _tokenValidationParameters;
+        private readonly ContextClass _dataContext;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly RoleManager<IdentityRole> roleManager;
         private string roleResult;
 
-        public string roleResultPublic { get { return this.roleResult; } set { this.roleResult = value; } }
+        public string roleResultPublic { get { return roleResult; } set { roleResult = value; } }
 
-        public IdentityService(UserManager<User> userManager, JwtSettings jwtSettings, TokenValidationParameters tokenValidationParameters, ContextClass dataContext, IUnitOfWork unitOfWork, RoleManager<IdentityRole> identityRole)
+        public IdentityService(UserManager<User> userManager, Options.JwtSettings jwtSettings, TokenValidationParameters tokenValidationParameters, ContextClass dataContext, IUnitOfWork unitOfWork, RoleManager<IdentityRole> identityRole)
         {
-            this.userManager = userManager;
-            this.jwtSettings = jwtSettings;
-            this.tokenValidationParameters = tokenValidationParameters;
-            this.dataContext = dataContext;
-            this.unitOfWork = unitOfWork;
-            this.roleManager = identityRole;
+            _userManager = userManager;
+            _jwtSettings = jwtSettings;
+            _tokenValidationParameters = tokenValidationParameters;
+            _dataContext = dataContext;
+            _unitOfWork = unitOfWork;
+            roleManager = identityRole;
         }
 
-        public async Task<AuthenticationResult> Login(UserLoginRequest request)
+        public async Task<AuthenticationResult> Login(Requests.UserLoginRequest request)
         {
-            var user = await this.userManager.FindByEmailAsync(request.Email);
+            var user = await _userManager.FindByEmailAsync(request.Email);
             if (user == null)
             {
-                var getUser = await this.userManager.FindByIdAsync(request.Email);
+                var getUser = await _userManager.FindByIdAsync(request.Email);
                 return new AuthenticationResult
                 {
                     Success = false,
@@ -48,7 +45,7 @@
                 };
             }
 
-            var userHasValidPassword = await this.userManager.CheckPasswordAsync(user, request.Password);
+            var userHasValidPassword = await _userManager.CheckPasswordAsync(user, request.Password);
             if (!userHasValidPassword)
             {
                 return new AuthenticationResult
@@ -58,22 +55,22 @@
                 };
             }
 
-            var role = await this.userManager.GetRolesAsync(user);
+            var role = await _userManager.GetRolesAsync(user);
 
             if (role.Contains("SuperAdmin"))
             {
-                this.roleResultPublic = "SuperAdmin";
+                roleResultPublic = "SuperAdmin";
             }
             else
-                this.roleResultPublic = "Admin";
+                roleResultPublic = "Admin";
 
-            return await this.GenerateAutheticationResultForUser(user);
+            return await GenerateAutheticationResultForUser(user);
         }
 
         public async Task<AuthenticationResult> RefreshTokenAsync(string token, string refreshToken)
         {
 
-            var validatedTOken = this.GetPrincipalFromToken(token);
+            var validatedTOken = GetPrincipalFromToken(token);
             if (validatedTOken == null)
             {
                 return new AuthenticationResult
@@ -91,7 +88,7 @@
             }
 
             var jtokenId = validatedTOken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
-            var storedRefreshToken = this.dataContext.RefreshTokens.SingleOrDefault(x => x.Token == refreshToken);
+            var storedRefreshToken = _dataContext.RefreshTokens.SingleOrDefault(x => x.Token == refreshToken);
 
             if (storedRefreshToken == null)
             {
@@ -119,11 +116,11 @@
             }
 
             storedRefreshToken.IsUsed = true;
-            this.dataContext.RefreshTokens.Update(storedRefreshToken);
-            await this.dataContext.SaveChangesAsync();
+            _dataContext.RefreshTokens.Update(storedRefreshToken);
+            await _dataContext.SaveChangesAsync();
 
-            var user = await this.userManager.FindByIdAsync(validatedTOken.Claims.Single(x => x.Type == "userId").Value);
-            return await this.GenerateAutheticationResultForUser(user);
+            var user = await _userManager.FindByIdAsync(validatedTOken.Claims.Single(x => x.Type == "userId").Value);
+            return await GenerateAutheticationResultForUser(user);
         }
 
         private ClaimsPrincipal GetPrincipalFromToken(string token)
@@ -131,8 +128,8 @@
             var tokenHandler = new JwtSecurityTokenHandler();
             try
             {
-                var principal = tokenHandler.ValidateToken(token, this.tokenValidationParameters, out var validatedToken);
-                if (!this.IsJwtWIthValidSecurityAlgorithm(validatedToken))
+                var principal = tokenHandler.ValidateToken(token, _tokenValidationParameters, out var validatedToken);
+                if (!IsJwtWIthValidSecurityAlgorithm(validatedToken))
                 {
                     return null;
                 }
@@ -150,13 +147,13 @@
 
         private bool IsJwtWIthValidSecurityAlgorithm(SecurityToken validatedTOken)
         {
-            return (validatedTOken is JwtSecurityToken jwtToken) &&
+            return validatedTOken is JwtSecurityToken jwtToken &&
                 jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase);
         }
 
-        public async Task<AuthenticationResult> Register(UserRegistrationRequest request)
+        public async Task<AuthenticationResult> Register(Services.IdentityService.Requests.UserRegistrationRequest request)
         {
-            var existingUser = await this.userManager.FindByEmailAsync(request.Email);
+            var existingUser = await _userManager.FindByEmailAsync(request.Email);
             if (existingUser != null)
             {
                 return new AuthenticationResult
@@ -174,7 +171,7 @@
                 UserName = request.Email,
             };
 
-            var createdUser = await this.userManager.CreateAsync(user, request.Password);
+            var createdUser = await _userManager.CreateAsync(user, request.Password);
 
             if (!createdUser.Succeeded)
             {
@@ -185,41 +182,37 @@
                 };
             }
 
-            // Creates A Specified Role
-            this.roleResultPublic = request.Role;
-            var result = await this.userManager.AddToRoleAsync(user, request.Role);
+            roleResultPublic = request.Role;
+            var result = await _userManager.AddToRoleAsync(user, request.Role);
 
-            return await this.GenerateAutheticationResultForUser(user);
+            return await GenerateAutheticationResultForUser(user);
         }
 
         private async Task<AuthenticationResult> GenerateAutheticationResultForUser(User user)
         {
             string superAdmin = "SuperAdmin";
             string result = "Admin";
-            if (this.roleResultPublic != result && this.roleResultPublic != superAdmin)
+            if (roleResultPublic != result && roleResultPublic != superAdmin)
             {
-                this.roleResultPublic = result;
+                roleResultPublic = result;
             }
 
-            if (this.roleResultPublic == superAdmin)
+            if (roleResultPublic == superAdmin)
             {
                 result = superAdmin;
             }
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(this.jwtSettings.Secret);
+            var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    //new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    //new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                    //new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
                     new Claim(ClaimTypes.Role, result), // You have to add the User Role inside the claims so the token can generate it inside the code and give you the result for authorization
                     new Claim(ClaimTypes.NameIdentifier, user.Id), // For getting userID
                 }),
-                Expires = DateTime.UtcNow.Add(this.jwtSettings.TokenLifetime),
+                Expires = DateTime.UtcNow.Add(_jwtSettings.TokenLifetime),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
@@ -233,8 +226,8 @@
                 ExpiryDate = DateTime.UtcNow.AddMonths(6),
             };
 
-            await this.dataContext.RefreshTokens.AddAsync(refreshToken);
-            await this.dataContext.SaveChangesAsync();
+            await _dataContext.RefreshTokens.AddAsync(refreshToken);
+            await _dataContext.SaveChangesAsync();
 
             return new AuthenticationResult
             {

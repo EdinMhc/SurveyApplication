@@ -42,22 +42,22 @@
 
         public Response(object data, params string[] messages)
         {
-            this.Status.StatusCode = ResponseStatusCode.Success;
-            this.Status.Messages.AddRange(messages);
-            this.Data = data;
+            Status.StatusCode = ResponseStatusCode.Success;
+            Status.Messages.AddRange(messages);
+            Data = data;
         }
 
         public Response(ResponseStatusCode statusCode, object errorData, params string[] messages)
         {
-            this.Status.StatusCode = statusCode;
-            this.Status.Messages.AddRange(messages);
-            this.ErrorData = errorData;
+            Status.StatusCode = statusCode;
+            Status.Messages.AddRange(messages);
+            ErrorData = errorData;
         }
 
         public Response(ResponseStatusCode statusCode, params string[] messages)
         {
-            this.Status.StatusCode = statusCode;
-            this.Status.Messages.AddRange(messages);
+            Status.StatusCode = statusCode;
+            Status.Messages.AddRange(messages);
         }
 
         public static Response Success(object data, params string[] messages)

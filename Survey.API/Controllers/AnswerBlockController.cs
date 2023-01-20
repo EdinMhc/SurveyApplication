@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Survey.API.DTOs.AnwserBlockDtos;
-using Survey.Domain.Services.AnwserBlockService;
+using Survey.Domain.Services.Interfaces;
 using Survey.Infrastructure.Entities;
 
 namespace Survey.API.Controllers
@@ -12,14 +12,14 @@ namespace Survey.API.Controllers
     [Route("api/{companyId}/answerblock/{surveyId}")]
     public class AnswerBlockController : BaseController<AnswerBlockController>
     {
-        private readonly IMapper mapper;
-        private readonly IAnwserBlockService anwserBlockService;
+        private readonly IMapper _mapper;
+        private readonly IAnwserBlockService _anwserBlockService;
 
         public AnswerBlockController(IMapper mapper, IAnwserBlockService anwserBlockService, IHttpContextAccessor contextAccessor) : base(contextAccessor)
         {
-            mapper = mapper ??
+            _mapper = mapper ??
                 throw new ArgumentNullException(nameof(mapper));
-            anwserBlockService = anwserBlockService ??
+            _anwserBlockService = anwserBlockService ??
                 throw new ArgumentNullException(nameof(anwserBlockService));
         }
 
@@ -33,8 +33,8 @@ namespace Survey.API.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<AnwserBlockBasicInfoDto>> GetAll(int companyId, int surveyId)
         {
-            var surveys = anwserBlockService.GetAll(companyId, surveyId, UserInfo.role, UserInfo.userId);
-            return Ok(mapper.Map<List<AnwserBlockBasicInfoDto>>(surveys));
+            var surveys = _anwserBlockService.GetAll(companyId, surveyId, UserInfo.role, UserInfo.userId);
+            return Ok(_mapper.Map<List<AnwserBlockBasicInfoDto>>(surveys));
         }
 
         /// <summary>
@@ -47,17 +47,17 @@ namespace Survey.API.Controllers
         [HttpGet("{answerBlockId}")]
         public IActionResult Get(int answerBlockId, int companyId, int surveyId)
         {
-            var question = anwserBlockService.GetById(answerBlockId, companyId, surveyId, UserInfo.role, UserInfo.userId);
-            return Ok(mapper.Map<AnwserBlockBasicInfoDto>(question));
+            var question = _anwserBlockService.GetById(answerBlockId, companyId, surveyId, UserInfo.role, UserInfo.userId);
+            return Ok(_mapper.Map<AnwserBlockBasicInfoDto>(question));
         }
 
         [Authorize(Roles = "Admin, SuperAdmin", Policy = "IsAnonymousUser")]
         [HttpPost]
         public async Task<IActionResult> PostAsync(int companyId, int surveyId, [FromBody] AnwserBlockForCreationDto anwserBlockInfo)
         {
-            var mapped = mapper.Map<AnwserBlock>(anwserBlockInfo);
-            var survey = await anwserBlockService.CreateAsync(mapped, companyId, surveyId, UserInfo.role, UserInfo.userId);
-            return Ok(mapper.Map<AnwserBlockBasicInfoDto>(survey));
+            var mapped = _mapper.Map<AnwserBlock>(anwserBlockInfo);
+            var survey = await _anwserBlockService.CreateAsync(mapped, companyId, surveyId, UserInfo.role, UserInfo.userId);
+            return Ok(_mapper.Map<AnwserBlockBasicInfoDto>(survey));
         }
 
         /// <summary>
@@ -72,9 +72,9 @@ namespace Survey.API.Controllers
         [HttpPut("{answerBlockId}")]
         public async Task<IActionResult> PutAsync(int companyId, int surveyId, int answerBlockId, [FromBody] AnwserBlockUpdateDto anwserBlockInfo)
         {
-            var mapped = mapper.Map<AnwserBlock>(anwserBlockInfo);
-            var anwserBlock = await anwserBlockService.UpdateAsync(mapped, companyId, surveyId, answerBlockId, UserInfo.role, UserInfo.userId);
-            return Ok(mapper.Map<AnwserBlockBasicInfoDto>(anwserBlock));
+            var mapped = _mapper.Map<AnwserBlock>(anwserBlockInfo);
+            var anwserBlock = await _anwserBlockService.UpdateAsync(mapped, companyId, surveyId, answerBlockId, UserInfo.role, UserInfo.userId);
+            return Ok(_mapper.Map<AnwserBlockBasicInfoDto>(anwserBlock));
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace Survey.API.Controllers
         [HttpDelete("{answerBlockId}")]
         public async Task<IActionResult> Delete(int companyId, int surveyId, int answerBlockId)
         {
-            return Ok(await anwserBlockService.DeleteAsync(companyId, surveyId, answerBlockId, UserInfo.role, UserInfo.userId));
+            return Ok(await _anwserBlockService.DeleteAsync(companyId, surveyId, answerBlockId, UserInfo.role, UserInfo.userId));
         }
 
     }
