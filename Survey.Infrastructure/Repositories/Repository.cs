@@ -1,8 +1,8 @@
-﻿namespace Survey.Infrastructure.Repositories
+﻿using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
+
+namespace Survey.Infrastructure.Repositories
 {
-    using Microsoft.EntityFrameworkCore;
-    using Survey.Infrastructure.ContextClass1;
-    using System.Linq.Expressions;
 
     public class Repository<T> : IRepository<T> where T : class
     {

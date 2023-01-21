@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using Survey.Infrastructure.ContextClass1;
+using Survey.Infrastructure;
 using Survey.Infrastructure.Entities;
 using Survey.Infrastructure.Entities.JwtRelated;
 using Survey.Infrastructure.Repositories;

@@ -1,8 +1,8 @@
-﻿namespace Survey.API.JwtRelated.Helpers
-{
-    using System.Security.Claims;
+﻿using System.Security.Claims;
 
-    public static class GeneralExtensions
+namespace Survey.API.Auhthorization
+{
+    public static class UserInfoProvider
     {
         public static string GetUserId(this HttpContext httpContext)
         {

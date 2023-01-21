@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Survey.API.JwtRelated.Helpers;
+using Survey.API.Auhthorization;
 
 namespace Survey.API.Controllers
 {
@@ -11,7 +11,7 @@ namespace Survey.API.Controllers
 
         public BaseController(IHttpContextAccessor contextAccessor)
         {
-            string userId = GeneralExtensions.GetUserId(contextAccessor.HttpContext);
+            string userId = contextAccessor.HttpContext.GetUserId();
             string role = contextAccessor.HttpContext.GetRole();
             UserInfo = (userId, role);
             _contextAccessor = contextAccessor;

@@ -1,11 +1,12 @@
-﻿namespace Survey.Domain.Services
+﻿using global::FluentValidation;
+using Microsoft.Extensions.Logging;
+using Survey.Domain.Services.FluentValidation.Answer;
+using Survey.Domain.Services.Interfaces;
+using Survey.Infrastructure.Entities;
+using Survey.Infrastructure.Repositories;
+
+namespace Survey.Domain.Services
 {
-    using global::FluentValidation;
-    using Microsoft.Extensions.Logging;
-    using Survey.Domain.Services.FluentValidation.Answer;
-    using Survey.Domain.Services.Interfaces;
-    using Survey.Infrastructure.Entities;
-    using Survey.Infrastructure.Repositories;
 
     public class AnswerService : IAnswerService
     {

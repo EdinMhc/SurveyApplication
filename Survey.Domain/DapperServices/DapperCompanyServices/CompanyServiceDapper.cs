@@ -1,20 +1,21 @@
-﻿namespace Survey.Domain.DapperServices.DapperCompanyServices
+﻿using Microsoft.Extensions.Logging;
+using Survey.Domain.Services;
+using Survey.Infrastructure.DapperRepository.StoredProcedure.DapperDto;
+using Survey.Infrastructure.Entities;
+using Survey.Infrastructure.Repositories;
+
+namespace Survey.Domain.DapperServices.DapperCompanyServices
 {
-    using Microsoft.Extensions.Logging;
-    using Survey.Domain.Services;
-    using Survey.Infrastructure.DapperRepository.StoredProcedure.DapperDto;
-    using Survey.Infrastructure.Entities;
-    using Survey.Infrastructure.Repositories;
 
     public class CompanyServiceDapper : ICompanyServiceDapper
     {
-        private readonly ILogger<CompanyServiceDapper> logger;
-        private IUnitOfWork unitOfWork;
+        private readonly ILogger<CompanyServiceDapper> _logger;
+        private IUnitOfWork _unitOfWork;
 
         public CompanyServiceDapper(IUnitOfWork unitOfWork, ILogger<CompanyServiceDapper> logger)
         {
-            unitOfWork = unitOfWork;
-            logger = logger;
+            _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
         // ------------------------ GetAll ------------------------
@@ -23,19 +24,19 @@
             // CompanyAdmin Access
             if (role == AdminHelper.Admin)
             {
-                var result = await unitOfWork.companyGenericRepository.GetAllAsync();
-                return result;
+                var adminCompany = await _unitOfWork.companyGenericRepository.GetAllAsync();
+                return adminCompany;
             }
 
             // SuperAdmin Access
-            var result1 = await unitOfWork.companyGenericRepository.GetAllAsync();
-            return result1;
+            var superAdminCompany = await _unitOfWork.companyGenericRepository.GetAllAsync();
+            return superAdminCompany;
         }
 
         // ------------------------ GetByID ------------------------
         public async Task<Company> GetById(int CompanyId, string? role, string? userId)
         {
-            var userCheck = unitOfWork.CompanyRepository.GetAll().Where(x => x.CompanyID == CompanyId && x.UserID == userId);
+            var userCheck = _unitOfWork.CompanyRepository.GetAll().Where(x => x.CompanyID == CompanyId && x.UserID == userId);
             if (userCheck == null)
             {
                 throw new CustomException.CustomException(CustomException.ErrorResponseCode.CompanyNotExistant);
@@ -43,12 +44,12 @@
 
             if (role == AdminHelper.Admin)
             {
-                var result = await unitOfWork.companyGenericRepository.GetAsync(CompanyId);
-                return result;
+                var AdminCompany = await _unitOfWork.companyGenericRepository.GetAsync(CompanyId);
+                return AdminCompany;
             }
 
-            var result1 = await unitOfWork.companyGenericRepository.GetAsync(CompanyId);
-            return result1;
+            var superAdminCompany = await _unitOfWork.companyGenericRepository.GetAsync(CompanyId);
+            return superAdminCompany;
         }
 
         public async Task<Company> UpdateDapper(List<DapperCompanyCreationDto> company, string? role, string userId)
@@ -58,23 +59,23 @@
                 // CompanyAdmin Access
                 if (role == AdminHelper.Admin)
                 {
-                    var userCheck = unitOfWork.UserRepository.GetByID(userId);
-                    if (userCheck == null)
+                    var isAdmin = _unitOfWork.UserRepository.GetByID(userId);
+                    if (isAdmin == null)
                     {
                         throw new CustomException.CustomException(CustomException.ErrorResponseCode.UserDoesNotMatch);
                     }
 
                     // Transform 1 object result into a list
 
-                    await unitOfWork.companyGenericRepository.StoredProcedureAsync(company);
-                    await unitOfWork.SaveChangesAsync();
+                    await _unitOfWork.companyGenericRepository.StoredProcedureAsync(company);
+                    await _unitOfWork.SaveChangesAsync();
 
                     return null;
                 }
 
                 // SuperAdmin Access
-                var userCheck1 = unitOfWork.UserRepository.GetByID(userId);
-                if (userCheck1 == null)
+                var isSuperAdmin = _unitOfWork.UserRepository.GetByID(userId);
+                if (isSuperAdmin == null)
                 {
                     throw new CustomException.CustomException(CustomException.ErrorResponseCode.UserDoesNotMatch);
                 }
@@ -83,14 +84,14 @@
                 // Company company1 = new Company();
                 // List<Company> transform = new List<Company> { company1 };
 
-                await unitOfWork.companyGenericRepository.StoredProcedureAsync(company);
-                await unitOfWork.SaveChangesAsync();
+                await _unitOfWork.companyGenericRepository.StoredProcedureAsync(company);
+                await _unitOfWork.SaveChangesAsync();
 
                 return null;
             }
             catch (Exception ex)
             {
-                logger.LogError($"Error occurred: {ex}");
+                _logger.LogError($"Error occurred: {ex}");
                 if (ex is CustomException.CustomException) throw ex;
 
                 throw new CustomException.CustomException(CustomException.ErrorResponseCode.GlobalError);
@@ -154,10 +155,10 @@
                 if (role == AdminHelper.Admin)
                 {
                     // CompanyAdmin Access
-                    var dbCompany1 = unitOfWork.CompanyRepository.GetAll().FirstOrDefault(x => x.CompanyID == companyId && x.User.Id == userId);
+                    var dbCompany1 = _unitOfWork.CompanyRepository.GetAll().FirstOrDefault(x => x.CompanyID == companyId && x.User.Id == userId);
                     if (dbCompany1 == null)
                     {
-                        logger.LogError($"Error occurred: {CustomException.ErrorResponseCode.CompanyNotExistant}");
+                        _logger.LogError($"Error occurred: {CustomException.ErrorResponseCode.CompanyNotExistant}");
                         throw new CustomException.CustomException(CustomException.ErrorResponseCode.CompanyNotExistant);
                     }
 
@@ -165,17 +166,17 @@
                     dbCompany1.Email = company.Email ?? dbCompany1.Email;
                     dbCompany1.Address = company.Address ?? dbCompany1.Address;
 
-                    await unitOfWork.companyGenericRepository.UpdateAsync(dbCompany1);
-                    await unitOfWork.SaveChangesAsync();
+                    await _unitOfWork.companyGenericRepository.UpdateAsync(dbCompany1);
+                    await _unitOfWork.SaveChangesAsync();
 
                     return dbCompany1;
                 }
 
                 // SuperAdmin Access
-                var dbCompany = unitOfWork.CompanyRepository.GetByID(companyId);
+                var dbCompany = _unitOfWork.CompanyRepository.GetByID(companyId);
                 if (dbCompany == null)
                 {
-                    logger.LogError($"Error occurred: {CustomException.ErrorResponseCode.CompanyNotExistant}");
+                    _logger.LogError($"Error occurred: {CustomException.ErrorResponseCode.CompanyNotExistant}");
                     throw new CustomException.CustomException(CustomException.ErrorResponseCode.CompanyNotExistant);
                 }
 
@@ -183,14 +184,14 @@
                 dbCompany.Email = company.Email ?? dbCompany.Email;
                 dbCompany.Address = company.Address ?? dbCompany.Address;
 
-                await unitOfWork.companyGenericRepository.UpdateAsync(dbCompany);
-                await unitOfWork.SaveChangesAsync();
+                await _unitOfWork.companyGenericRepository.UpdateAsync(dbCompany);
+                await _unitOfWork.SaveChangesAsync();
 
                 return dbCompany;
             }
             catch (Exception ex)
             {
-                logger.LogError($"Error occurred: {ex}");
+                _logger.LogError($"Error occurred: {ex}");
                 if (ex is CustomException.CustomException) throw ex;
                 throw new CustomException.CustomException(CustomException.ErrorResponseCode.GlobalError);
             }

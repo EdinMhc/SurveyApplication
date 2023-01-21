@@ -1,4 +1,4 @@
-﻿namespace Survey.API.JwtRelated.Auhthorization
+﻿namespace Survey.API.Auhthorization
 {
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -6,7 +6,6 @@
     using System.Security.Claims;
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    //Attribute
     public class Authorize2Attribute : AuthorizeAttribute, IAuthorizationFilter
     {
         private readonly IList<string> roles;
@@ -29,7 +28,7 @@
             var user = context.HttpContext.User;
             var userRole = context.HttpContext.User.Claims.Single(x => x.Type == ClaimTypes.Role).Value;
 
-            if (userRole == null || (roles.Any() && !roles.Contains(userRole)))
+            if (userRole == null || roles.Any() && !roles.Contains(userRole))
             {
                 // Role is not valid
                 context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };

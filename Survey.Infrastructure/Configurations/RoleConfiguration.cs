@@ -1,8 +1,9 @@
-﻿namespace Survey.Infrastructure.ContextClass1
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace Survey.Infrastructure.Configurations
 {
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
     public class RoleConfiguration : IEntityTypeConfiguration<IdentityRole>
     {

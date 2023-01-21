@@ -1,8 +1,9 @@
-﻿namespace Survey.Infrastructure.ContextClass1.Configurations
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Survey.Infrastructure.Entities;
+
+namespace Survey.Infrastructure.Configurations
 {
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Metadata.Builders;
-    using Survey.Infrastructure.Entities;
 
     public class AnswerBlockCascadeDelete : IEntityTypeConfiguration<AnwserBlock>
     {

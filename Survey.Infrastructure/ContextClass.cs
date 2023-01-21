@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Survey.Infrastructure.ContextClass1.Configurations;
+using Survey.Infrastructure.Configurations;
 using Survey.Infrastructure.Entities;
 using Survey.Infrastructure.Entities.JwtRelated;
 
-namespace Survey.Infrastructure.ContextClass1
+namespace Survey.Infrastructure
 {
 
     public class ContextClass : IdentityDbContext<User>
@@ -54,7 +54,6 @@ namespace Survey.Infrastructure.ContextClass1
                 UsersToSeed[0]);
         }
 
-        // Using a List of users to seed a object to Company, at the same time info for SeedUser.
         private List<User> UsersToSeed = new List<User>
         {
             new User

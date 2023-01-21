@@ -1,4 +1,4 @@
-﻿namespace Survey.API.JwtRelated.Auhthorization.AnonymousUserHandler
+﻿namespace Survey.API.Auhthorization.AnonymousUserHandler
 {
     [Serializable]
     public class ExceptionAnonymous : Exception

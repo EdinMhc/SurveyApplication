@@ -1,7 +1,8 @@
-﻿namespace Survey.Infrastructure.ContextClass1.Configurations
+﻿using Microsoft.EntityFrameworkCore;
+using Survey.Infrastructure.Entities;
+
+namespace Survey.Infrastructure.Configurations
 {
-    using Microsoft.EntityFrameworkCore;
-    using Survey.Infrastructure.Entities;
 
     public class OnDeleteConf : IEntityTypeConfiguration<SurveyReportData>
     {

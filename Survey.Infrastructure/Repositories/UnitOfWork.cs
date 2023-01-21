@@ -1,9 +1,9 @@
-﻿namespace Survey.Infrastructure.Repositories
+﻿using Microsoft.Extensions.Configuration;
+using Survey.Infrastructure.DapperRepository;
+using Survey.Infrastructure.Entities;
+
+namespace Survey.Infrastructure.Repositories
 {
-    using Microsoft.Extensions.Configuration;
-    using Survey.Infrastructure.ContextClass1;
-    using Survey.Infrastructure.DapperRepository;
-    using Survey.Infrastructure.Entities;
 
     public class UnitOfWork : IUnitOfWork
     {
