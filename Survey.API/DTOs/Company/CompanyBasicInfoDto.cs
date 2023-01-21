@@ -1,6 +1,5 @@
 ﻿namespace Survey.API.DTOs.Company
 {
-    using Survey.API.DTOs.SurveyDtos;
 
     public class CompanyBasicInfoDto
     {

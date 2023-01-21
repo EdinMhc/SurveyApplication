@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Survey.API.Auhthorization;
-
-namespace Survey.API.Controllers
+﻿namespace Survey.API.Controllers
 {
     public abstract class BaseController<T> : ControllerBase
     {

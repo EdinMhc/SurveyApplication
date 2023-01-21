@@ -1,6 +1,5 @@
 ﻿namespace Survey.API.DTOs.AnwserBlockDtos
 {
-    using System.ComponentModel.DataAnnotations;
 
     public class AnwserBlockForCreationDto
     {

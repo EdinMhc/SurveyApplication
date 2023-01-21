@@ -1,20 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Serilog;
-using Serilog.Exceptions;
-using Survey.API;
-using Survey.API.Auhthorization.AnonymousUserHandler;
-using Survey.API.Dapper;
-using Survey.API.Global_Exception_Handler;
-using Survey.Domain.Services.IdentityService.Options;
-using Survey.Infrastructure;
-using System.Text;
-using System.Text.Json.Serialization;
-
-// TODO
-// Refactor the code.
-// Create new authorization attribute with same roles.
-// Update all survices
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.AddConsole();
 builder.Logging.ClearProviders();
@@ -22,14 +5,6 @@ builder.Logging.ClearProviders();
 // Add services to the container.
 ConfigureLogging();
 builder.Host.UseSerilog();
-
-builder.Services.AddControllers(options =>
-{
-    options.Filters.Add<ExceptionResponseHandlingFilter>();
-}).AddJsonOptions(x =>
-{
-    x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-});
 
 builder.Services.AddDbContext<ContextClass>(
     dbContextOptions => dbContextOptions.UseSqlServer(
@@ -66,8 +41,6 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerConfiguration();
 
-//builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-
 builder.Services.AddDapperDependency();
 
 builder.Services.AddAuthorization(options =>
@@ -79,18 +52,7 @@ builder.Services.AddAuthorization(options =>
         policy => policy.AddRequirements(new AllowAnonymousAuthorizationRequirement()));
 });
 
-builder.Services.AddControllers()
-    .ConfigureApiBehaviorOptions(options =>
-    {
-        options.SuppressMapClientErrors = true;
-    });
-
-builder.Services.AddControllers(options =>
-{
-    options.Filters.Add<ExceptionResponseHandlingFilter>();
-})
-    .AddJsonOptions(x =>
-                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+builder.Services.AddControllerConfiguration();
 
 var app = builder.Build();
 

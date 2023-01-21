@@ -1,11 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Survey.API.DTOs.Company;
-using Survey.Domain.DapperServices.DapperCompanyServices;
-using Survey.Infrastructure.DapperRepository.StoredProcedure.DapperDto;
-
-namespace Survey.API.Controllers
+﻿namespace Survey.API.Controllers
 {
 
     [Authorize]

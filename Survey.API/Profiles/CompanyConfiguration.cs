@@ -1,8 +1,5 @@
 ﻿namespace Survey.API.Profiles
 {
-    using AutoMapper;
-    using Survey.API.DTOs.Company;
-    using Survey.Infrastructure.Entities;
 
     public class CompanyConfiguration : Profile
     {

@@ -1,8 +1,5 @@
 ﻿namespace Survey.API.Dapper.DapperProfiles
 {
-    using AutoMapper;
-    using Survey.API.Dapper.DapperDtoCompany;
-    using Survey.Infrastructure.Entities;
 
     public sealed class DapperCompanyProfiles : Profile
     {

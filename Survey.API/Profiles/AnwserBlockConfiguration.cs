@@ -1,8 +1,5 @@
 ﻿namespace Survey.API.Profiles
 {
-    using AutoMapper;
-    using Survey.API.DTOs.AnwserBlockDtos;
-    using Survey.Infrastructure.Entities;
 
     public class AnwserBlockConfiguration : Profile
     {

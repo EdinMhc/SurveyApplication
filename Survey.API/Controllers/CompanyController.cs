@@ -1,12 +1,5 @@
 ﻿namespace Survey.API.Controllers
 {
-    using AutoMapper;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
-    using Survey.API.DTOs.Company;
-    using Survey.Domain.Services.Interfaces;
-    using Survey.Infrastructure.Entities;
-
     [Authorize]
     [ApiController]
     [Route("api/companies")]

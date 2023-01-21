@@ -1,7 +1,4 @@
-﻿using Survey.Domain.DapperServices.DapperCompanyServices;
-using Survey.Infrastructure.DapperRepository;
-
-namespace Survey.API.Dapper
+﻿namespace Survey.API.Dapper
 {
     public static class ServiceRegistration
     {

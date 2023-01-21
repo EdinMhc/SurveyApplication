@@ -1,8 +1,4 @@
-﻿using AutoMapper;
-using Survey.API.DTOs.AnwserDtos;
-using Survey.Infrastructure.Entities;
-
-namespace Survey.API.Profiles
+﻿namespace Survey.API.Profiles
 {
     public class AnwserConfiguration : Profile
     {

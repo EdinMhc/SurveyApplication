@@ -1,11 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Survey.API.DTOs.AnwserBlockDtos;
-using Survey.Domain.Services.Interfaces;
-using Survey.Infrastructure.Entities;
-
-namespace Survey.API.Controllers
+﻿namespace Survey.API.Controllers
 {
     [Authorize]
     [ApiController]

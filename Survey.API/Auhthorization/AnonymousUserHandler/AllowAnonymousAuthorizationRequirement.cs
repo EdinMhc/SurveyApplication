@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Survey.Domain.CustomException;
-
-namespace Survey.API.Auhthorization.AnonymousUserHandler
+﻿namespace Survey.API.Auhthorization.AnonymousUserHandler
 {
     public class AllowAnonymousAuthorizationRequirement :
         AuthorizationHandler<AllowAnonymousAuthorizationRequirement>, IAuthorizationRequirement

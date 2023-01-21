@@ -1,22 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using Survey.Domain.Services;
-using Survey.Domain.Services.IdentityService;
-using Survey.Domain.Services.IdentityService.Interfaces;
-using Survey.Domain.Services.Interfaces;
-using Survey.Infrastructure;
-using Survey.Infrastructure.Entities;
-using Survey.Infrastructure.Repositories;
-
-namespace Survey.API
+﻿namespace Survey.API
 {
     public static class Dependencies
     {
         public static void AddDependencyInjections(this IServiceCollection services)
         {
+            // Repositories and Services
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ICompanyService, CompanyService>();
             services.AddScoped<ISurveyService, SurveyService>();
@@ -28,6 +16,25 @@ namespace Survey.API
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddHttpContextAccessor();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+        }
+
+        public static void AddControllerConfiguration(this IServiceCollection services)
+        {
+            services.AddControllers()
+            .ConfigureApiBehaviorOptions(options =>
+            {
+                options.SuppressMapClientErrors = true;
+            });
+
+            services.AddControllers(options =>
+            {
+                options.Filters.Add<ExceptionResponseHandlingFilter>();
+            })
+            .AddJsonOptions(x =>
+            {
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
         }
 
         public static void AddIdentityConfiguration(this IServiceCollection services)

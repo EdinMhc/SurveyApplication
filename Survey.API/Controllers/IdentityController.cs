@@ -1,10 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Survey.Domain.Services.IdentityService.Contracts;
-using Survey.Domain.Services.IdentityService.Interfaces;
-using Survey.Domain.Services.IdentityService.Requests;
-using Survey.Domain.Services.IdentityService.Responses;
-
-namespace MinimalAPI.Controllers
+﻿namespace MinimalAPI.Controllers
 {
 
     public class IdentityContoller : Controller

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Survey.API.DTOs.AnwserDtos
+﻿namespace Survey.API.DTOs.AnwserDtos
 {
     public class AnswerUpdateDto
     {

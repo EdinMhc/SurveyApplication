@@ -1,7 +1,5 @@
 ﻿namespace Survey.API.Global_Exception_Handler
 {
-    using Newtonsoft.Json;
-    using Survey.Domain.CustomException;
 
     public class ErrorDetails
     {
