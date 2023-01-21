@@ -1,26 +1,18 @@
 ﻿namespace Survey.API.Controllers
 {
-    using AutoMapper;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
-    using Survey.API.DTOs.Company;
-    using Survey.API.JwtRelated.Helpers;
-    using Survey.Domain.DapperServices.DapperCompanyServices;
-    using Survey.Domain.Services.Helper_Admin;
-    using Survey.Infrastructure.DapperRepository.StoredProcedure.DapperDto;
 
     [Authorize]
     [Route("api/dapper")]
-    public class DapperController : ControllerBase
+    public class DapperController : BaseController<DapperController>
     {
-        private readonly IMapper mapper;
-        private readonly ICompanyServiceDapper companyService;
+        private readonly IMapper _mapper;
+        private readonly ICompanyServiceDapper _companyService;
 
-        public DapperController(IMapper mapper, ICompanyServiceDapper companyService)
+        public DapperController(IMapper mapper, ICompanyServiceDapper companyService, IHttpContextAccessor contextAccessor) : base(contextAccessor)
         {
-            this.mapper = mapper ??
+            _mapper = mapper ??
                 throw new ArgumentNullException(nameof(mapper));
-            this.companyService = companyService ??
+            _companyService = companyService ??
                 throw new ArgumentNullException(nameof(companyService));
         }
 
@@ -28,33 +20,24 @@
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CompanyBasicInfoDto>>> GetAll()
         {
-            string userId = GeneralExtensions.GetUserId(this.HttpContext);
-            string role = this.User.IsInRole(AdminHelper.Admin) ? AdminHelper.Admin : AdminHelper.SuperAdmin;
-
-            var companiesAdmin = await this.companyService.GetAllAsync(role, userId);
-            return this.Ok(this.mapper.Map<List<CompanyBasicInfoDto>>(companiesAdmin));
+            var company = await _companyService.GetAllAsync(UserInfo.role, UserInfo.userId);
+            return Ok(_mapper.Map<List<CompanyBasicInfoDto>>(company));
         }
 
         [Authorize(Roles = "Admin, SuperAdmin", Policy = "IsAnonymousUser")]
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            string userId = GeneralExtensions.GetUserId(this.HttpContext);
-            string role = this.User.IsInRole(AdminHelper.Admin) ? AdminHelper.Admin : AdminHelper.SuperAdmin;
-
-            var company1 = await this.companyService.GetById(id, role, userId);
-            return this.Ok(this.mapper.Map<CompanyBasicInfoDto>(company1));
+            var company = await _companyService.GetById(id, UserInfo.role, UserInfo.userId);
+            return Ok(_mapper.Map<CompanyBasicInfoDto>(company));
         }
 
         [Authorize(Roles = "Admin, SuperAdmin", Policy = "IsAnonymousUser")]
         [HttpPost]
         public async Task<IActionResult> PostAsync([FromBody] List<DapperCompanyCreationDto> companyInfo)
         {
-            string userId = GeneralExtensions.GetUserId(this.HttpContext);
-            string role = this.User.IsInRole(AdminHelper.Admin) ? AdminHelper.Admin : AdminHelper.SuperAdmin;
-
-            var company = await this.companyService.UpdateDapper(companyInfo, role, userId);
-            return this.Ok(this.mapper.Map<CompanyBasicInfoDto>(company));
+            var company = await _companyService.UpdateDapper(companyInfo, UserInfo.role, UserInfo.userId);
+            return Ok(_mapper.Map<CompanyBasicInfoDto>(company));
         }
     }
 }

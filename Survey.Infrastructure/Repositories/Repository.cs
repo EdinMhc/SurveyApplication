@@ -1,8 +1,8 @@
-﻿namespace Survey.Infrastructure.Repositories
+﻿using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
+
+namespace Survey.Infrastructure.Repositories
 {
-    using Microsoft.EntityFrameworkCore;
-    using Survey.Infrastructure.ContextClass1;
-    using System.Linq.Expressions;
 
     public class Repository<T> : IRepository<T> where T : class
     {
@@ -11,44 +11,44 @@
 
         public Repository(ContextClass context)
         {
-            this._context = context;
-            this.entities = this._context.Set<T>();
+            _context = context;
+            entities = _context.Set<T>();
         }
 
         public IQueryable<T> GetAll()
         {
-            return this.entities.AsQueryable();
+            return entities.AsQueryable();
         }
 
         public T GetByID(object id)
         {
-            return this.entities.Find(id);
+            return entities.Find(id);
         }
 
         public IEnumerable<TType> Get<TType>(Expression<Func<T, bool>> where, Expression<Func<T, TType>> select) where TType : class
         {
-            return this.entities.Where(where).Select(select).ToList();
+            return entities.Where(where).Select(select).ToList();
         }
 
         public void Add(T entity)
         {
-            this.entities.Add(entity);
+            entities.Add(entity);
         }
 
         public void Update(T entity)
         {
-            this.entities.Attach(entity);
-            this._context.Entry(entity).State = EntityState.Modified;
+            entities.Attach(entity);
+            _context.Entry(entity).State = EntityState.Modified;
         }
 
         public void Delete(T entity)
         {
-            this.entities.Remove(entity);
+            entities.Remove(entity);
         }
 
-        public async Task<bool> ExistsAsync(int cityId)
+        public async Task<bool> ExistsAsync(int companyId)
         {
-            return await this._context.Company.AnyAsync(c => c.CompanyID == cityId);
+            return await _context.Company.AnyAsync(c => c.CompanyID == companyId);
         }
     }
 }

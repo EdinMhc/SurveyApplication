@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Survey.API.DTOs.AnwserBlockDtos
+﻿namespace Survey.API.DTOs.AnwserBlockDtos
 {
     public class AnwserBlockBasicInfoDto
     {

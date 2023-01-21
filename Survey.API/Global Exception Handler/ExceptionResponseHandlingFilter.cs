@@ -1,17 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Newtonsoft.Json;
-using Survey.API.Global_Exception_Handler;
-using Survey.Domain.CustomException;
-
-public class ExceptionResponseHandlingFilter : ActionFilterAttribute
+﻿public class ExceptionResponseHandlingFilter : ActionFilterAttribute
 {
-    private readonly ILogger<ExceptionResponseHandlingFilter> logger;
+    private readonly ILogger<ExceptionResponseHandlingFilter> _logger;
     private string body;
 
     public ExceptionResponseHandlingFilter(ILogger<ExceptionResponseHandlingFilter> logger)
     {
-        this.logger = logger;
+        _logger = logger;
     }
 
     public override void OnActionExecuting(ActionExecutingContext context)
@@ -22,7 +16,7 @@ public class ExceptionResponseHandlingFilter : ActionFilterAttribute
 
             try
             {
-                this.body = JsonConvert.SerializeObject(context.ActionArguments);
+                body = JsonConvert.SerializeObject(context.ActionArguments);
             }
             catch
             {
@@ -31,7 +25,7 @@ public class ExceptionResponseHandlingFilter : ActionFilterAttribute
         }
         catch (Exception exception)
         {
-            this.logger.LogError(exception, "{Function}", "OnActionExecuting");
+            _logger.LogError(exception, "{Function}", "OnActionExecuting");
         }
 
         base.OnActionExecuting(context);
@@ -41,7 +35,7 @@ public class ExceptionResponseHandlingFilter : ActionFilterAttribute
     {
         if (context.Exception != null)
         {
-            this.HandleException(context);
+            HandleException(context);
         }
 
         base.OnActionExecuted(context);
@@ -57,16 +51,16 @@ public class ExceptionResponseHandlingFilter : ActionFilterAttribute
 
         if (exception is CustomException smsApiException)
         {
-            this.HandleCustomException(context, smsApiException);
+            HandleCustomException(context, smsApiException);
         }
         else if (exception is Exception)
         {
-            this.HandleException(context, exception);
+            HandleException(context, exception);
         }
 
         context.ExceptionHandled = true;
 
-        this.logger.LogError(context.Exception, "{Function}: Failed to process API calls. |  Body: {Body}", "HandleException", this.body);
+        _logger.LogError(context.Exception, "{Function}: Failed to process API calls. |  Body: {Body}", "HandleException", body);
     }
 
     private void HandleException(ActionExecutedContext context, Exception exception)

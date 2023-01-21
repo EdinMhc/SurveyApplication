@@ -1,7 +1,8 @@
-﻿namespace Survey.Infrastructure.Repositories
+﻿using Survey.Infrastructure.DapperRepository;
+using Survey.Infrastructure.Entities;
+
+namespace Survey.Infrastructure.Repositories
 {
-    using Survey.Infrastructure.DapperRepository;
-    using Survey.Infrastructure.Entities;
 
     public interface IUnitOfWork
     {

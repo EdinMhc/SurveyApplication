@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Survey.API.DTOs.QuestionDtos
+﻿namespace Survey.API.DTOs.QuestionDtos
 {
     public class QuestionForCreationDto
     {

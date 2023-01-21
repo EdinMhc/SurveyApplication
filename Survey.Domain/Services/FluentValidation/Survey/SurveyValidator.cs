@@ -7,47 +7,47 @@
 
     public class SurveyValidator : AbstractValidator<Surveys>
     {
-        private readonly int companyId;
-        private readonly string userId;
-        private IUnitOfWork unitOfWork;
-        private ValidationResult result;
+        private readonly int CompanyId;
+        private readonly string UserId;
+        private IUnitOfWork _unitOfWork;
+        private ValidationResult _result;
 
         public SurveyValidator(IUnitOfWork unitOfWork, int companyId, string userId)
         {
-            this.result = new ValidationResult();
-            this.unitOfWork = unitOfWork;
-            this.companyId = companyId;
-            this.userId = userId;
+            _result = new ValidationResult();
+            _unitOfWork = unitOfWork;
+            CompanyId = companyId;
+            UserId = userId;
 
 
-            this.RuleFor(x => x.SurveyName)
+            RuleFor(x => x.SurveyName)
                 .NotEmpty()
                 .Length(2, 255)
                 .NotNull();
-            this.RuleFor(x => x.IsActive)
+            RuleFor(x => x.IsActive)
                 .NotNull();
         }
 
         public override ValidationResult Validate(ValidationContext<Surveys> context)
         {
-            this.result = base.Validate(context);
-            this.ValidateCompany();
+            _result = base.Validate(context);
+            ValidateCompany();
 
-            return this.result;
+            return _result;
         }
 
         private void ValidateCompany()
         {
-            if (this.companyId <= 0)
+            if (CompanyId <= 0)
             {
-                this.result.Errors.Add(new ValidationFailure("CompanyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.CompanyIDvalidation]));
+                _result.Errors.Add(new ValidationFailure("CompanyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.CompanyIDvalidation]));
             }
 
             // Company Existance
-            var companyInfo = this.unitOfWork.CompanyRepository.GetAll().FirstOrDefault(x => x.CompanyID == this.companyId && x.UserID == this.userId);
+            var companyInfo = _unitOfWork.CompanyRepository.GetAll().FirstOrDefault(x => x.CompanyID == CompanyId && x.UserID == UserId);
             if (companyInfo == null)
             {
-                this.result.Errors.Add(new ValidationFailure("CompanyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.CompanyNotExistant]));
+                _result.Errors.Add(new ValidationFailure("CompanyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.CompanyNotExistant]));
             }
         }
     }

@@ -24,7 +24,7 @@
         [ForeignKey("UserID")]
         public string UserID { get; set; }
 
-        public User User { get; set; } = new User();
+        public User User { get; set; } = new();
 
         public virtual ICollection<AnwserBlock>? AnswerBlock { get; set; }
 

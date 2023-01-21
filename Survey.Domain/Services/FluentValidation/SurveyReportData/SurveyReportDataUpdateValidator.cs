@@ -7,33 +7,33 @@
 
     public class SurveyReportDataUpdateValidator : AbstractValidator<SurveyReportData>
     {
-        private readonly int companyId;
-        private readonly int surveyId;
-        private readonly int surveyReportId;
-        private readonly int questionId;
-        private readonly int respondentId;
-        private readonly int answerId;
-        private IUnitOfWork unitOfWork;
-        private ValidationResult result;
+        private readonly int CompanyId;
+        private readonly int SurveyId;
+        private readonly int SurveyReportId;
+        private readonly int QuestionId;
+        private readonly int RespondentId;
+        private readonly int AnswerId;
+        private IUnitOfWork _unitOfWork;
+        private ValidationResult _result;
 
         public SurveyReportDataUpdateValidator(IUnitOfWork unitOfWork, int companyId, int surveyId, int surveyReportId, int questionId, int answerId, int respondentId)
         {
-            this.companyId = companyId;
-            this.surveyId = surveyId;
-            this.surveyReportId = surveyReportId;
-            this.questionId = questionId;
-            this.answerId = answerId;
-            this.result = new ValidationResult();
-            this.unitOfWork = unitOfWork;
-            this.respondentId = respondentId;
+            CompanyId = companyId;
+            SurveyId = surveyId;
+            SurveyReportId = surveyReportId;
+            QuestionId = questionId;
+            AnswerId = answerId;
+            _result = new ValidationResult();
+            _unitOfWork = unitOfWork;
+            RespondentId = respondentId;
 
-            this.RuleFor(x => x.QuestionID)
+            RuleFor(x => x.QuestionID)
                 .NotNull()
                 .NotEmpty()
                 .GreaterThanOrEqualTo(1)
                 .Unless(x => x.QuestionID <= 0);
 
-            this.RuleFor(x => x.AnswerID)
+            RuleFor(x => x.AnswerID)
                 .NotNull()
                 .NotEmpty()
                 .GreaterThanOrEqualTo(1)
@@ -42,55 +42,55 @@
 
         public override ValidationResult Validate(ValidationContext<SurveyReportData> context)
         {
-            this.result = base.Validate(context);
-            this.ValidateCompany();
-            this.ValidateSurvey();
-            this.ValidateSurveyReport();
-            this.ValidateSurveyReportData();
-            this.ValidateAnswer();
-            this.ValidateQuestion();
-            this.ValidateAnswerBlock(this.ValidateQuestion(), this.ValidateAnswer());
+            _result = base.Validate(context);
+            ValidateCompany();
+            ValidateSurvey();
+            ValidateSurveyReport();
+            ValidateSurveyReportData();
+            ValidateAnswer();
+            ValidateQuestion();
+            ValidateAnswerBlock(ValidateQuestion(), ValidateAnswer());
 
-            return this.result;
+            return _result;
         }
 
         private void ValidateCompany()
         {
-            if (this.companyId == 0)
+            if (CompanyId == 0)
             {
-                this.result.Errors.Add(new ValidationFailure("CompanyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.CompanyIDBelowOrEqualToZero]));
+                _result.Errors.Add(new ValidationFailure("CompanyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.CompanyIDBelowOrEqualToZero]));
             }
         }
 
         private void ValidateSurvey()
         {
-            if (this.surveyId == 0)
+            if (SurveyId == 0)
             {
-                this.result.Errors.Add(new ValidationFailure("SurveyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.SurveyIDBelowOrEqualToZero]));
+                _result.Errors.Add(new ValidationFailure("SurveyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.SurveyIDBelowOrEqualToZero]));
             }
 
-            var resultSurveyCompany = this.unitOfWork.SurveysRepository.GetAll().FirstOrDefault(p => p.SurveyID == this.surveyId && p.CompanyID == this.companyId);
+            var resultSurveyCompany = _unitOfWork.SurveysRepository.GetAll().FirstOrDefault(p => p.SurveyID == SurveyId && p.CompanyID == CompanyId);
             if (resultSurveyCompany == null)
             {
-                this.result.Errors.Add(new ValidationFailure("SurveyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.RelationshipCompanySurvey]));
+                _result.Errors.Add(new ValidationFailure("SurveyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.RelationshipCompanySurvey]));
 
             }
         }
 
         private void ValidateSurveyReport()
         {
-            if (this.surveyReportId == 0)
+            if (SurveyReportId == 0)
             {
-                this.result.Errors.Add(new ValidationFailure("SurveyReportId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.SurveyIDBelowOrEqualToZero]));
+                _result.Errors.Add(new ValidationFailure("SurveyReportId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.SurveyIDBelowOrEqualToZero]));
             }
 
-            var dbSurveyReport = this.unitOfWork.SurveyReportRepository.GetAll().FirstOrDefault(p => p.SurveyID == this.surveyId && p.SurveyReportID == this.surveyReportId);
+            var dbSurveyReport = _unitOfWork.SurveyReportRepository.GetAll().FirstOrDefault(p => p.SurveyID == SurveyId && p.SurveyReportID == SurveyReportId);
             if (dbSurveyReport == null)
             {
-                this.result.Errors.Add(new ValidationFailure("SurveyReportId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.SurveyReportNotExistant]));
+                _result.Errors.Add(new ValidationFailure("SurveyReportId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.SurveyReportNotExistant]));
             }
 
-            var resultSurveyReportCompany = this.unitOfWork.SurveyReportDataRepository.GetAll().FirstOrDefault(p => p.SurveyReportID == this.surveyReportId);
+            var resultSurveyReportCompany = _unitOfWork.SurveyReportDataRepository.GetAll().FirstOrDefault(p => p.SurveyReportID == SurveyReportId);
             if (resultSurveyReportCompany == null)
             {
                 throw new CustomException.CustomException(CustomException.ErrorResponseCode.RelationshipSurveySurvey);
@@ -100,21 +100,21 @@
 
         private void ValidateSurveyReportData()
         {
-            if (this.respondentId <= 0)
+            if (RespondentId <= 0)
             {
-                this.result.Errors.Add(new ValidationFailure("SurveyReportDataId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.SurveyReportDataIDBelowOrEqualToZero]));
+                _result.Errors.Add(new ValidationFailure("SurveyReportDataId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.SurveyReportDataIDBelowOrEqualToZero]));
 
             }
         }
 
         private Anwser ValidateAnswer()
         {
-            if (this.answerId <= 0)
+            if (AnswerId <= 0)
             {
-                this.result.Errors.Add(new ValidationFailure("AnswerId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.AnwserIDBelowOrEqualToZero]));
+                _result.Errors.Add(new ValidationFailure("AnswerId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.AnwserIDBelowOrEqualToZero]));
             }
 
-            var answerCheckForUpdate = this.unitOfWork.AnwserRepository.GetAll().FirstOrDefault(p => p.AnwserID == this.answerId);
+            var answerCheckForUpdate = _unitOfWork.AnwserRepository.GetAll().FirstOrDefault(p => p.AnwserID == AnswerId);
             if (answerCheckForUpdate == null)
             {
                 throw new CustomException.CustomException(CustomException.ErrorResponseCode.AnwserIDValidation);
@@ -125,12 +125,12 @@
 
         private Question ValidateQuestion()
         {
-            if (this.questionId <= 0)
+            if (QuestionId <= 0)
             {
-                this.result.Errors.Add(new ValidationFailure("QuestionId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.QuestionIDBelowOrEqualToZero]));
+                _result.Errors.Add(new ValidationFailure("QuestionId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.QuestionIDBelowOrEqualToZero]));
             }
 
-            var questionCheckForUpdate = this.unitOfWork.QuestionRepository.GetAll().FirstOrDefault(p => p.QuestionID == this.questionId);
+            var questionCheckForUpdate = _unitOfWork.QuestionRepository.GetAll().FirstOrDefault(p => p.QuestionID == QuestionId);
             if (questionCheckForUpdate == null)
             {
                 throw new CustomException.CustomException(CustomException.ErrorResponseCode.QuestionIDValidation);
@@ -141,7 +141,7 @@
 
         private void ValidateAnswerBlock(Question question, Anwser answer)
         {
-            var answerBlock = this.unitOfWork.AnwserBlockRepository.GetAll().FirstOrDefault(p => p.CompanyID == this.companyId);
+            var answerBlock = _unitOfWork.AnwserBlockRepository.GetAll().FirstOrDefault(p => p.CompanyID == CompanyId);
             if (answerBlock == null)
             {
                 throw new CustomException.CustomException(CustomException.ErrorResponseCode.RelationShipAnswerBlockCompany);
@@ -150,13 +150,13 @@
             // Connection between ANSWER AND ANSWERBLOCK
             if (answer.AnwserBlockID != answerBlock.AnwserBlockID)
             {
-                this.result.Errors.Add(new ValidationFailure("AnswerBlockId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.RelationshipAnwserBlockAnswer]));
+                _result.Errors.Add(new ValidationFailure("AnswerBlockId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.RelationshipAnwserBlockAnswer]));
             }
 
             // Connection between QUESTION AND ANSWERBLOCK
             if (question.AnwserBlockID != answerBlock.AnwserBlockID)
             {
-                this.result.Errors.Add(new ValidationFailure("AnswerBlockId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.RelationshipAnwserBlockQuestion]));
+                _result.Errors.Add(new ValidationFailure("AnswerBlockId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.RelationshipAnwserBlockQuestion]));
             }
         }
     }

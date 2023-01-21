@@ -1,6 +1,4 @@
-﻿using Survey.API.DTOs.SurveyReportData;
-
-namespace Survey.API.DTOs.SurveyReportDtos
+﻿namespace Survey.API.DTOs.SurveyReportDtos
 {
     public class SurveyReportBasicInfoDto
     {

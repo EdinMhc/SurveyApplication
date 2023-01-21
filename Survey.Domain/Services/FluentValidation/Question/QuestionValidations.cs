@@ -7,35 +7,35 @@
 
     public class QuestioCreateValidator : AbstractValidator<Question>
     {
-        private readonly int companyId;
-        private readonly int surveyId;
-        private readonly int answerBlockId;
-        private IUnitOfWork unitOfWork;
+        private readonly int CompanyId;
+        private readonly int SurveyId;
+        private readonly int AnswerBlockId;
+        private IUnitOfWork _unitOfWork;
         private ValidationResult result;
 
         public QuestioCreateValidator(IUnitOfWork unitOfWork, int companyId, int surveyId, int answerBlockId)
         {
-            this.result = new ValidationResult();
-            this.unitOfWork = unitOfWork;
-            this.companyId = companyId;
-            this.surveyId = surveyId;
-            this.answerBlockId = answerBlockId;
+            result = new ValidationResult();
+            _unitOfWork = unitOfWork;
+            CompanyId = companyId;
+            SurveyId = surveyId;
+            AnswerBlockId = answerBlockId;
 
-            this.RuleFor(x => x.AnwserBlockID)
+            RuleFor(x => x.AnwserBlockID)
                 .NotNull().WithMessage("Can not create Question AnswerBlock with null property")
                 .NotEmpty().WithMessage("Can not create Question AnswerBlock with empty property");
 
-            this.RuleFor(x => x.Code)
+            RuleFor(x => x.Code)
                 .NotNull().WithMessage("Can not create Question code with null property")
                 .NotEmpty().WithMessage("Can not create Question code with empty property")
                 .Length(2, 255).WithMessage("Question Code is shorter or longer than required");
 
-            this.RuleFor(x => x.QuestionText)
+            RuleFor(x => x.QuestionText)
                 .NotNull().WithMessage("Can not create Question Text with null property")
                 .NotEmpty().WithMessage("Can not create Question Text with empty property")
                 .Length(2, 255).WithMessage("Question Text is shorter or longer than required");
 
-            this.RuleFor(x => x.QuestionType)
+            RuleFor(x => x.QuestionType)
                 .NotNull().WithMessage("Can not create Question Type with null property")
                 .NotEmpty().WithMessage("Can not create Question Type with empty property")
                 .Length(2, 255).WithMessage("Question Type is shorter or longer than required");
@@ -43,23 +43,22 @@
 
         public override ValidationResult Validate(ValidationContext<Question> context)
         {
-            this.result = base.Validate(context);
-            this.ValidateCompany();
-            this.ValidateSurvey();
-            this.ValidateAnswerBlock();
+            result = base.Validate(context);
+            ValidateCompany();
+            ValidateSurvey();
+            ValidateAnswerBlock();
 
-            return this.result;
+            return result;
         }
 
         private void ValidateCompany()
         {
-            //TODO DB VALIDATE
-            if (this.companyId <= 0)
+            if (CompanyId <= 0)
             {
-                this.result.Errors.Add(new ValidationFailure("CompanyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.CompanyIDvalidation]));
+                result.Errors.Add(new ValidationFailure("CompanyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.CompanyIDvalidation]));
             }
 
-            var company = this.unitOfWork.CompanyRepository.GetByID(this.companyId);
+            var company = _unitOfWork.CompanyRepository.GetByID(CompanyId);
 
             if (company == null)
             {
@@ -69,13 +68,12 @@
 
         private void ValidateSurvey()
         {
-            //TODO DB VALIDATE
-            if (this.surveyId <= 0)
+            if (SurveyId <= 0)
             {
-                this.result.Errors.Add(new ValidationFailure("CompanyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.CompanyIDvalidation]));
+                result.Errors.Add(new ValidationFailure("CompanyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.CompanyIDvalidation]));
             }
 
-            var resultSurveyCompany = this.unitOfWork.SurveysRepository.GetAll().FirstOrDefault(p => p.SurveyID == this.surveyId && p.CompanyID == this.companyId);
+            var resultSurveyCompany = _unitOfWork.SurveysRepository.GetAll().FirstOrDefault(p => p.SurveyID == SurveyId && p.CompanyID == CompanyId);
 
             if (resultSurveyCompany == null)
             {
@@ -85,7 +83,7 @@
 
         private void ValidateAnswerBlock()
         {
-            var anwserBlockCheck = this.unitOfWork.AnwserBlockRepository.GetByID(this.answerBlockId);
+            var anwserBlockCheck = _unitOfWork.AnwserBlockRepository.GetByID(AnswerBlockId);
             if (anwserBlockCheck == null)
             {
                 throw new CustomException.CustomException(CustomException.ErrorResponseCode.AnwserBlockNotExistant);

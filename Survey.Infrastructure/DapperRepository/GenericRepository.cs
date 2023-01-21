@@ -13,27 +13,27 @@
     public class GenericRepository<T> : IGenericRepository<T>
         where T : class
     {
-        public readonly string tableName;
-        public readonly string primaryKeyName;
-        private readonly IConfiguration configuration;
+        public readonly string TableName;
+        public readonly string PrimaryKeyName;
+        private readonly IConfiguration _configuration;
 
         public GenericRepository(string tableName, string primaryKeyName, IConfiguration configuration)
         {
-            this.tableName = tableName;
-            this.primaryKeyName = primaryKeyName;
-            this.configuration = configuration;
+            TableName = tableName;
+            PrimaryKeyName = primaryKeyName;
+            _configuration = configuration;
         }
 
         // GENERATE CONNECTION
         private SqlConnection SqlConnection()
         {
-            return new SqlConnection(this.configuration.GetConnectionString("ProjectDB"));
+            return new SqlConnection(_configuration.GetConnectionString("ProjectDB"));
         }
 
         // CONNECTION HELPER
         private IDbConnection CreateConnection()
         {
-            var conn = this.SqlConnection();
+            var conn = SqlConnection();
             conn.Open();
             return conn;
         }
@@ -45,15 +45,15 @@
         {
             using (var connection = CreateConnection())
             {
-                await connection.ExecuteAsync($"DELETE FROM {this.tableName} WHERE {this.primaryKeyName}=@Id", new { Id = id });
+                await connection.ExecuteAsync($"DELETE FROM {TableName} WHERE {PrimaryKeyName}=@Id", new { Id = id });
             }
         }
 
         public async Task DeleteRowAsync(int id)
         {
-            using (var connection = this.CreateConnection())
+            using (var connection = CreateConnection())
             {
-                await connection.ExecuteAsync($"DELETE FROM {this.tableName} WHERE {this.primaryKeyName}=@Id", new { Id = id });
+                await connection.ExecuteAsync($"DELETE FROM {TableName} WHERE {PrimaryKeyName}=@Id", new { Id = id });
             }
         }
 
@@ -62,7 +62,7 @@
         {
             using (var connection = CreateConnection())
             {
-                return await connection.QueryAsync<T>($"SELECT * FROM {this.tableName}");
+                return await connection.QueryAsync<T>($"SELECT * FROM {TableName}");
             }
         }
 
@@ -71,10 +71,10 @@
         {
             using (var connection = CreateConnection())
             {
-                var result = await connection.QuerySingleOrDefaultAsync<T>($"SELECT * FROM {this.tableName} WHERE {this.primaryKeyName}=@Id", new { Id = id });
+                var result = await connection.QuerySingleOrDefaultAsync<T>($"SELECT * FROM {TableName} WHERE {PrimaryKeyName}=@Id", new { Id = id });
                 if (result == null)
                 {
-                    throw new KeyNotFoundException($"{this.tableName} with id [{id}] could not be found.");
+                    throw new KeyNotFoundException($"{TableName} with id [{id}] could not be found.");
                 }
 
                 return result;
@@ -85,10 +85,10 @@
         {
             using (var connection = CreateConnection())
             {
-                var result = await connection.QuerySingleOrDefaultAsync<T>($"SELECT * FROM {this.tableName} WHERE {this.primaryKeyName}=@Id", new { Id = id });
+                var result = await connection.QuerySingleOrDefaultAsync<T>($"SELECT * FROM {TableName} WHERE {PrimaryKeyName}=@Id", new { Id = id });
                 if (result == null)
                 {
-                    throw new KeyNotFoundException($"{this.tableName} with id [{id}] could not be found.");
+                    throw new KeyNotFoundException($"{TableName} with id [{id}] could not be found.");
                 }
 
                 return result;
@@ -109,9 +109,9 @@
         // ====================================== UPDATE QUERY ======================================
         public async Task UpdateAsync(T t)
         {
-            var updateQuery = this.GenerateUpdateQuery();
+            var updateQuery = GenerateUpdateQuery();
 
-            using (var connection = this.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 await connection.ExecuteAsync(updateQuery, t);
             }
@@ -127,7 +127,7 @@
                 "@Companies",
                 dt.AsTableValuedParameter("udttCompany"));
 
-            using (var connection = this.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 // Pass it to query
                 var result = connection.Query<dynamic>("updateCompanies", parameters, commandType: CommandType.StoredProcedure);
@@ -138,8 +138,8 @@
         public async Task<int> SaveRangeAsync(IEnumerable<T> list)
         {
             var inserted = 0;
-            var query = this.GenerateInsertQuery();
-            using (var connection = this.CreateConnection())
+            var query = GenerateInsertQuery();
+            using (var connection = CreateConnection())
             {
                 inserted += await connection.ExecuteAsync(query, list);
             }
@@ -149,11 +149,11 @@
 
         private string GenerateInsertQuery()
         {
-            var insertQuery = new StringBuilder($"INSERT INTO {this.tableName} ");
+            var insertQuery = new StringBuilder($"INSERT INTO {TableName} ");
 
             insertQuery.Append("(");
 
-            var properties = GenerateListOfProperties(this.GetProperties);
+            var properties = GenerateListOfProperties(GetProperties);
             properties.ForEach(prop => { insertQuery.Append($"[{prop}],"); });
 
             insertQuery
@@ -179,8 +179,8 @@
 
         private string GenerateUpdateQuery()
         {
-            var updateQuery = new StringBuilder($"UPDATE {this.tableName} SET ");
-            var properties = GenerateListOfProperties(this.GetProperties);
+            var updateQuery = new StringBuilder($"UPDATE {TableName} SET ");
+            var properties = GenerateListOfProperties(GetProperties);
 
             properties.ForEach(property =>
             {

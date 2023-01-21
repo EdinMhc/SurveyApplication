@@ -1,7 +1,8 @@
-﻿namespace Survey.Infrastructure.Entities.JwtRelated
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Survey.Infrastructure.Entities.JwtRelated
 {
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
 
     public class RefreshToken
     {

@@ -7,58 +7,58 @@
 
     public class AnswerValidationCreation : AbstractValidator<Anwser>
     {
-        private readonly int companyId;
-        private readonly int anwserBlockId;
-        private IUnitOfWork unitOfWork;
-        private ValidationResult result;
+        private readonly int CompanyId;
+        private readonly int AnwserBlockId;
+        private IUnitOfWork _unitOfWork;
+        private ValidationResult _result;
 
         public AnswerValidationCreation(IUnitOfWork unitOfWork, int companyId, int anwserBlockId)
         {
-            this.result = new ValidationResult();
-            this.unitOfWork = unitOfWork;
-            this.anwserBlockId = anwserBlockId;
-            this.companyId = companyId;
+            _result = new ValidationResult();
+            _unitOfWork = unitOfWork;
+            AnwserBlockId = anwserBlockId;
+            CompanyId = companyId;
 
-            this.RuleFor(x => x.AnwserText)
+            RuleFor(x => x.AnwserText)
                 .NotNull().WithMessage("Can not create Answer Text with null property")
                 .NotEmpty().WithMessage("Can not create Answer Text with empty property");
         }
 
         public override ValidationResult Validate(ValidationContext<Anwser> context)
         {
-            this.result = base.Validate(context);
-            this.ValidateCompany();
-            this.ValidateAnswerBlock();
+            _result = base.Validate(context);
+            ValidateCompany();
+            ValidateAnswerBlock();
 
-            return this.result;
+            return _result;
         }
 
         private void ValidateCompany()
         {
-            if (this.companyId <= 0)
+            if (CompanyId <= 0)
             {
-                this.result.Errors.Add(new ValidationFailure("CompanyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.CompanyIDvalidation]));
+                _result.Errors.Add(new ValidationFailure("CompanyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.CompanyIDvalidation]));
             }
 
             // Company Existance
-            var companyInfo = this.unitOfWork.CompanyRepository.GetAll().FirstOrDefault(x => x.CompanyID == this.companyId);
+            var companyInfo = _unitOfWork.CompanyRepository.GetAll().FirstOrDefault(x => x.CompanyID == CompanyId);
             if (companyInfo == null)
             {
-                this.result.Errors.Add(new ValidationFailure("CompanyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.CompanyNotExistant]));
+                _result.Errors.Add(new ValidationFailure("CompanyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.CompanyNotExistant]));
             }
         }
 
         private void ValidateAnswerBlock()
         {
-            if (this.anwserBlockId <= 0)
+            if (AnwserBlockId <= 0)
             {
-                this.result.Errors.Add(new ValidationFailure("AnswerBlockId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.AnwserBlockIDBelowOrEqualToZero]));
+                _result.Errors.Add(new ValidationFailure("AnswerBlockId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.AnwserBlockIDBelowOrEqualToZero]));
             }
 
-            var anwserBlock1 = this.unitOfWork.AnwserBlockRepository.GetAll().FirstOrDefault(x => x.AnwserBlockID == this.anwserBlockId && x.CompanyID == this.companyId);
+            var anwserBlock1 = _unitOfWork.AnwserBlockRepository.GetAll().FirstOrDefault(x => x.AnwserBlockID == AnwserBlockId && x.CompanyID == CompanyId);
             if (anwserBlock1 == null)
             {
-                this.result.Errors.Add(new ValidationFailure("AnswerBlockId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.RelationShipAnswerBlockCompany]));
+                _result.Errors.Add(new ValidationFailure("AnswerBlockId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.RelationShipAnswerBlockCompany]));
             }
         }
     }

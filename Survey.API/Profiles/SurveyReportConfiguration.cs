@@ -1,22 +1,20 @@
 ﻿namespace Survey.API.Profiles
 {
-    using AutoMapper;
-    using Survey.API.DTOs.SurveyReportDtos;
 
     public class SurveyReportConfiguration : Profile
     {
         public SurveyReportConfiguration()
         {
             // Source --> Destination
-            this.CreateMap<Survey.Infrastructure.Entities.SurveyReport, Survey.API.DTOs.SurveyReportDtos.SurveyReportBasicInfoDto>();
-            this.CreateMap<SurveyReportBasicInfoDto, Survey.Infrastructure.Entities.SurveyReport>();
+            CreateMap<Survey.Infrastructure.Entities.SurveyReport, Survey.API.DTOs.SurveyReportDtos.SurveyReportBasicInfoDto>();
+            CreateMap<SurveyReportBasicInfoDto, Survey.Infrastructure.Entities.SurveyReport>();
 
 
-            this.CreateMap<Survey.Infrastructure.Entities.SurveyReport, Survey.API.DTOs.SurveyReportDtos.SurveyReportForCreationDto>();
-            this.CreateMap<SurveyReportForCreationDto, Survey.Infrastructure.Entities.SurveyReport>();
+            CreateMap<Survey.Infrastructure.Entities.SurveyReport, Survey.API.DTOs.SurveyReportDtos.SurveyReportForCreationDto>();
+            CreateMap<SurveyReportForCreationDto, Survey.Infrastructure.Entities.SurveyReport>();
 
-            this.CreateMap<Survey.Infrastructure.Entities.SurveyReport, Survey.API.DTOs.SurveyReportDtos.SurveyReportUpdateDtos>();
-            this.CreateMap<SurveyReportUpdateDtos, Survey.Infrastructure.Entities.SurveyReport>();
+            CreateMap<Survey.Infrastructure.Entities.SurveyReport, Survey.API.DTOs.SurveyReportDtos.SurveyReportUpdateDtos>();
+            CreateMap<SurveyReportUpdateDtos, Survey.Infrastructure.Entities.SurveyReport>();
         }
     }
 }

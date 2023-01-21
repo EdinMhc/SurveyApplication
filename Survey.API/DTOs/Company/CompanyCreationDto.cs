@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Survey.API.DTOs.Company
+﻿namespace Survey.API.DTOs.Company
 {
     public class CompanyCreationDto
     {

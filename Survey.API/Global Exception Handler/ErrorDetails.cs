@@ -1,7 +1,5 @@
 ﻿namespace Survey.API.Global_Exception_Handler
 {
-    using Newtonsoft.Json;
-    using Survey.Domain.CustomException;
 
     public class ErrorDetails
     {
@@ -14,8 +12,8 @@
 
         public ErrorDetails(ErrorResponseCode statusCode, string message)
         {
-            this.StatusCode = (int)statusCode;
-            this.Message = message;
+            StatusCode = (int)statusCode;
+            Message = message;
         }
 
         public override string ToString()

@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Survey.Infrastructure.ContextClass1;
 
 #nullable disable
 
@@ -51,15 +50,15 @@ namespace Survey.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "93c4e845-0098-4fe5-a69d-0a9607a30e3b",
-                            ConcurrencyStamp = "7234d9e6-1349-43b8-b595-165ccdc5e434",
+                            Id = "bffed1fb-fbb0-407d-bce2-09d0567294c9",
+                            ConcurrencyStamp = "9fd6390a-515d-4191-92c1-82f1fa626d70",
                             Name = "SuperAdmin",
                             NormalizedName = "SuperAdmin"
                         },
                         new
                         {
-                            Id = "85096ac8-cad9-4758-b2bb-265dd56b4fad",
-                            ConcurrencyStamp = "022a7ff1-7451-4966-820b-06790a870275",
+                            Id = "c48a4f12-a237-4019-9058-87db861f196b",
+                            ConcurrencyStamp = "1244d6fb-2955-4287-8ac9-8f394e24d2d9",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         });
@@ -502,21 +501,21 @@ namespace Survey.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "50fb8acc-d45e-4585-a62f-6387e3ff16c3",
+                            Id = "52e94785-070e-432a-829d-fbf449d2da2b",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "cadb3c5d-b769-40df-85d0-e9f82c5c5fe6",
-                            Email = "edin.muhic@forsta.com",
+                            ConcurrencyStamp = "d828b219-1797-4abb-8eab-59003e0b4033",
+                            Email = "A@A",
                             EmailConfirmed = false,
                             FirstName = "Edin",
                             LastName = "Muhic",
                             LockoutEnabled = false,
-                            NormalizedEmail = "EDIN.MUHIC@FORSTA.COM",
-                            NormalizedUserName = "EDIN.MUHIC@FORSTA.COM",
+                            NormalizedEmail = "A@A",
+                            NormalizedUserName = "A@A",
                             PasswordHash = "AQAAAAEAACcQAAAAEMF/jR4CGcZfNBTxLIe5QyaadJ5RFYRfZSh1I/1gfRjjTF9UPjhxDDa3+07E+tGzhQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "d280d766-7c6e-407d-bd5a-ee9048493bd2",
+                            SecurityStamp = "b698fb85-89da-4cca-9f93-d7aca8b7a267",
                             TwoFactorEnabled = false,
-                            UserName = "edin.muhic@forsta.com"
+                            UserName = "a@a"
                         });
                 });
 

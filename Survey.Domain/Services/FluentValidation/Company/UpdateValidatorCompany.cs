@@ -7,24 +7,24 @@
 
     public class UpdateValidatorCompany : AbstractValidator<Company>
     {
-        private readonly int companyId;
-        private IUnitOfWork unitOfWork;
-        private ValidationResult result;
+        private readonly int CompanyId;
+        private IUnitOfWork _unitOfWork;
+        private ValidationResult _result;
 
         public UpdateValidatorCompany(IUnitOfWork unitOfWork, int companyId)
         {
-            this.result = new ValidationResult();
-            this.unitOfWork = unitOfWork;
-            this.companyId = companyId;
+            _result = new ValidationResult();
+            _unitOfWork = unitOfWork;
+            CompanyId = companyId;
 
-            this.RuleFor(x => x.CompanyName)
-                .Must(x => this.ValidateCompanyName(x)).WithMessage("Company Name insufficient characters");
+            RuleFor(x => x.CompanyName)
+                .Must(x => ValidateCompanyName(x)).WithMessage("Company Name insufficient characters");
 
-            this.RuleFor(x => x.Address)
+            RuleFor(x => x.Address)
                 .Length(2, 255)
                 .Unless(x => x.Address == null || x.Address == string.Empty);
 
-            this.RuleFor(x => x.Email)
+            RuleFor(x => x.Email)
                 .Length(5, 255)
                 .EmailAddress().WithMessage("Email is not a valid email address.")
                 .Unless(x => x.Email == null || x.Email == string.Empty);
@@ -41,17 +41,17 @@
 
         public override ValidationResult Validate(ValidationContext<Company> context)
         {
-            this.result = base.Validate(context);
-            this.ValidateCompany();
+            _result = base.Validate(context);
+            ValidateCompany();
 
-            return this.result;
+            return _result;
         }
 
         private void ValidateCompany()
         {
-            if (this.companyId <= 0)
+            if (CompanyId <= 0)
             {
-                this.result.Errors.Add(new ValidationFailure("CompanyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.CompanyNotExistant]));
+                _result.Errors.Add(new ValidationFailure("CompanyId", CustomException.CustomException.Errors[CustomException.ErrorResponseCode.CompanyNotExistant]));
             }
         }
     }
