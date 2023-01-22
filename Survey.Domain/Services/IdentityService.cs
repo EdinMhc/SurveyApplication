@@ -79,6 +79,7 @@ namespace Survey.Domain.Services.IdentityService
                 };
             }
 
+            // 4 months
             var expiryDateUnix = long.Parse(validatedTOken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
             var expiryDateUTC = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Unspecified).AddSeconds(expiryDateUnix);
 
@@ -235,6 +236,24 @@ namespace Survey.Domain.Services.IdentityService
                 Success = true,
                 RefreshToken = refreshToken.Token,
             };
+        }
+
+        public async Task<bool> DeleteUser(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return false;
+            }
+
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+            {
+                return false;
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+            return true;
         }
     }
 }

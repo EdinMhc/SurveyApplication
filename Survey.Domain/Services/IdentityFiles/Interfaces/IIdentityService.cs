@@ -1,6 +1,7 @@
-﻿namespace Survey.Domain.Services.IdentityService.Interfaces
+﻿using Survey.Infrastructure.Entities.JwtRelated;
+
+namespace Survey.Domain.Services.IdentityService.Interfaces
 {
-    using Survey.Infrastructure.Entities.JwtRelated;
 
     public interface IIdentityService
     {
@@ -9,5 +10,7 @@
         Task<AuthenticationResult> Login(Requests.UserLoginRequest request);
 
         Task<AuthenticationResult> RefreshTokenAsync(string token, string refreshToken);
+
+        Task<bool> DeleteUser(string email);
     }
 }

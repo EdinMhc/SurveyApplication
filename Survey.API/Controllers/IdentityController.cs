@@ -10,6 +10,13 @@
             _identityService = identityService;
         }
 
+        [HttpPost(ApiRoutes.Identity.Delete)]
+        public async Task<IActionResult> Delete([FromBody] string email)
+        {
+            await _identityService.DeleteUser(email);
+            return NoContent();
+        }
+
         [HttpPost(ApiRoutes.Identity.Register)]
         public async Task<IActionResult> Register(Role role, [FromBody] UserRegistrationRequestDto request)
         {

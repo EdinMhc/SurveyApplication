@@ -105,3 +105,4 @@ void ConfigureLogging()
         .ReadFrom.Configuration(configuration)
         .CreateLogger();
 }
+public partial class Program { }

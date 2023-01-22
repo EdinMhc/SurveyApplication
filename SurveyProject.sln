@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Survey.Domain", "Survey.Dom
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Survey.Infrastructure", "Survey.Infrastructure\Survey.Infrastructure.csproj", "{32889039-B8E4-4E79-A06B-1E74FD6B8736}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Survey.xIntegrationTests", "Survey.xIntegrationTests\Survey.xIntegrationTests.csproj", "{7F8E7352-9B77-4483-8B60-C51E19F7B18A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{32889039-B8E4-4E79-A06B-1E74FD6B8736}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32889039-B8E4-4E79-A06B-1E74FD6B8736}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32889039-B8E4-4E79-A06B-1E74FD6B8736}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F8E7352-9B77-4483-8B60-C51E19F7B18A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F8E7352-9B77-4483-8B60-C51E19F7B18A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F8E7352-9B77-4483-8B60-C51E19F7B18A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F8E7352-9B77-4483-8B60-C51E19F7B18A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
