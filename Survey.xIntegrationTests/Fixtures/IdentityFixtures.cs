@@ -1,11 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
-using Survey.Domain.Services.IdentityService.Requests;
-using Survey.xIntegrationTests.Clients;
+﻿using Survey.xIntegrationTests.Clients;
 
 namespace Survey.xIntegrationTests.Fixtures
 {
-
-
     public class IdentityFixtures : FixtureImp
     {
 
@@ -13,12 +9,12 @@ namespace Survey.xIntegrationTests.Fixtures
         {
         }
 
-        public async Task<HttpResponseMessage> LoginUser(UserLoginRequest request)
+        public async Task<HttpResponseMessage> LoginUser(UserLoginRequest request, HttpClient client)
         {
             IdentityClients endpoint = new();
 
             var httpContent = CreateJsonContent(request);
-            var response = await _client.PostAsync(endpoint.Login, httpContent);
+            var response = await client.PostAsync(endpoint.Login, httpContent);
             return response;
         }
 

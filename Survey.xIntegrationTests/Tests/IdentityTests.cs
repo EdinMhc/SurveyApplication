@@ -1,28 +1,22 @@
-using Microsoft.AspNetCore.Mvc.Testing;
-using Newtonsoft.Json;
-using Survey.Domain.Services.IdentityService.Requests;
-using Survey.Domain.Services.IdentityService.Responses;
-using Survey.xIntegrationTests.Fixtures;
-using System.Net;
 
-namespace Survey.xIntegrationTests
+namespace Survey.xIntegrationTests.Tests
 {
     public class IdentityTests : IdentityFixtures
     {
         private string Email = "test@test.com";
         private string Password = "12345678";
 
-        public IdentityTests(WebApplicationFactory<Program> factory) : base(factory) { }
+
+        public IdentityTests(WebApplicationFactory<Program> factory) : base(factory)
+        {
+            _factory = factory;
+            _client = _factory.CreateClient();
+        }
 
         [Fact]
         public async Task GetAll_ShouldReturnBadRequest_ForAnonymousUsers()
         {
-            // Arrange
-
-            // Act
             var response = await _client.GetAsync("/api/companies");
-
-            // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
@@ -37,7 +31,7 @@ namespace Survey.xIntegrationTests
                     Password = Password,
                 };
 
-                var response = await LoginUser(loggedInInfo);
+                var response = await LoginUser(loggedInInfo, _client);
                 var responseString = await response.Content.ReadAsStringAsync();
                 var authSuccessResponse = JsonConvert.DeserializeObject<AuthSuccessResponse>(responseString);
 
@@ -62,7 +56,7 @@ namespace Survey.xIntegrationTests
                     Password = Password,
                 };
 
-                var response = await LoginUser(loggedInInfo);
+                var response = await LoginUser(loggedInInfo, _client);
                 var responseString = await response.Content.ReadAsStringAsync();
                 var authSuccessResponse = JsonConvert.DeserializeObject<AuthSuccessResponse>(responseString);
 
@@ -87,8 +81,34 @@ namespace Survey.xIntegrationTests
                     Assert.Equal(HttpStatusCode.BadRequest, refreshResponse.StatusCode);
                     Assert.NotNull(tokenAuthFailResponse);
                     Assert.NotNull(tokenAuthFailResponse.Errors);
-                    Assert.Equal(tokenAuthFailResponse.Errors.FirstOrDefault(), expected);
+                    Assert.Equal(tokenAuthFailResponse.Errors.First(), expected);
 
+                });
+            }
+        }
+
+        [Fact]
+        public async Task Login_ShouldReturnBadRequest_LoginFails()
+        {
+            await using (await CreateUserScope(Role.Admin))
+            {
+                UserLoginRequest loggedInInfo = new()
+                {
+                    Email = Email,
+                    Password = "wrongpassword",
+                };
+
+                var response = await LoginUser(loggedInInfo, _client);
+                var responseString = await response.Content.ReadAsStringAsync();
+                var authFailResponse = JsonConvert.DeserializeObject<AuthFailedResponse>(responseString);
+
+                string expected = "Email/password combination is wrong";
+
+                Assert.Multiple(() =>
+                {
+                    Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+                    Assert.NotNull(authFailResponse);
+                    Assert.Equal(authFailResponse.Errors.First(), expected);
                 });
             }
         }

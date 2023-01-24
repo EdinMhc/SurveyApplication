@@ -1,6 +1,4 @@
-﻿using Survey.Domain.Services.IdentityService.Requests;
-
-namespace Survey.xIntegrationTests.Clients
+﻿namespace Survey.xIntegrationTests.Clients
 {
     public class IdentityClients
     {
