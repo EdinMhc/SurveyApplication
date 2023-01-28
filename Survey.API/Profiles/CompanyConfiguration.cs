@@ -6,14 +6,14 @@
         public CompanyConfiguration()
         {
             // Source --> Destination
-            CreateMap<Company, CompanyBasicInfoDto>();
-            CreateMap<Company, CompanyCreationDto>();
-            CreateMap<CompanyCreationDto, CompanyFullInfoDto>();
+            CreateMap<Company, CompanyDto>();
+            CreateMap<Company, CompanyEditDto>();
+            CreateMap<CompanyEditDto, CompanyFullInfoDto>();
 
             // ForMember(destination => destination.CompanyName, source => source.MapFrom(x => x.CompanyName));
-            CreateMap<CompanyBasicInfoDto, Survey.Infrastructure.Entities.Company>();
-            CreateMap<CompanyCreationDto, Survey.Infrastructure.Entities.Company>();
-            CreateMap<CompanyFullInfoDto, CompanyCreationDto>();
+            CreateMap<CompanyDto, Company>();
+            CreateMap<CompanyEditDto, Company>();
+            CreateMap<CompanyFullInfoDto, CompanyEditDto>();
         }
     }
 }

@@ -2,11 +2,8 @@
 {
     public class CompanyClients
     {
-        public string CreateCompany { get; set; }
+        public string GetOrCreateCompany { get; set; }
         public string CrudOperations { get; }
-        public string GetAllCompanies { get; }
-        public string UpdateCompany { get; }
-        public string Delete { get; }
 
         public CompanyClients(int companyId)
         {
@@ -15,8 +12,7 @@
 
         public CompanyClients()
         {
-            CreateCompany = "api/companies/";
-            GetAllCompanies = "api/companies/";
+            GetOrCreateCompany = "api/companies/";
         }
     }
 }

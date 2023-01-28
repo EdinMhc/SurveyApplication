@@ -1,6 +1,6 @@
 ﻿namespace Survey.API.DTOs.Company
 {
-    public class CompanyCreationDto
+    public class CompanyEditDto
     {
         [Required]
         public string CompanyName { get; set; }

@@ -2,10 +2,10 @@
 
 namespace Survey.xIntegrationTests.Fixtures
 {
-    public class IdentityFixtures : FixtureImp
+    public class IdentityFixture : FixtureImp
     {
 
-        public IdentityFixtures(WebApplicationFactory<Program> factory) : base(factory)
+        public IdentityFixture(WebApplicationFactory<Program> factory) : base(factory)
         {
         }
 

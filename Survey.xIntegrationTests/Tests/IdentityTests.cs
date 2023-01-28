@@ -1,17 +1,12 @@
-
 namespace Survey.xIntegrationTests.Tests
 {
-    public class IdentityTests : IdentityFixtures
+    public class IdentityTestsCollection : ICollectionFixture<WebApplicationFactory<Program>> { }
+
+    [Collection("IdentityTestsCollection")]
+    public class IdentityTests : IdentityFixture
     {
-        private string Email = "test@test.com";
-        private string Password = "12345678";
-
-
         public IdentityTests(WebApplicationFactory<Program> factory) : base(factory)
-        {
-            _factory = factory;
-            _client = _factory.CreateClient();
-        }
+        { }
 
         [Fact]
         public async Task GetAll_ShouldReturnBadRequest_ForAnonymousUsers()
@@ -95,7 +90,7 @@ namespace Survey.xIntegrationTests.Tests
                 UserLoginRequest loggedInInfo = new()
                 {
                     Email = Email,
-                    Password = "wrongpassword",
+                    Password = "WrongPassword",
                 };
 
                 var response = await LoginUser(loggedInInfo, _client);

@@ -1,4 +1,6 @@
-﻿using Survey.xIntegrationTests.Clients;
+﻿using Survey.API.DTOs.Company;
+using Survey.xIntegrationTests.Clients;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace Survey.xIntegrationTests.Fixtures
@@ -7,8 +9,8 @@ namespace Survey.xIntegrationTests.Fixtures
     {
         public WebApplicationFactory<Program> _factory;
         public HttpClient _client;
-        private string Email = "test@test.com";
-        private string Password = "12345678";
+        public string Email;
+        public string Password = "12345678";
 
         public FixtureImp(WebApplicationFactory<Program> factory)
         {
@@ -21,14 +23,14 @@ namespace Survey.xIntegrationTests.Fixtures
             var identityEndpoints = new IdentityClients(role);
             var requestDto = new UserRegistrationRequestDto
             {
-                Email = "test@test.com",
+                Email = $"test@test" + Guid.NewGuid().ToString().Substring(0, 8) + ".com",
                 FirstName = "Test",
                 LastName = "User",
                 Password = "12345678"
             };
-
+            Email = requestDto.Email;
             var bodyRegistration = CreateJsonContent(requestDto);
-            var response = await _client.PostAsync(identityEndpoints.Register, bodyRegistration);
+            await _client.PostAsync(identityEndpoints.Register, bodyRegistration);
 
             return new UserScope(this, requestDto.Email, role);
         }
@@ -65,11 +67,18 @@ namespace Survey.xIntegrationTests.Fixtures
         public async Task<HttpResponseMessage> DeleteAsync(string endpoint, HttpClient client) =>
             await client.DeleteAsync(endpoint);
 
-        public async Task<HttpResponseMessage> UpdateAsync(string endpoint, HttpContent httpContent, HttpClient client) =>
-            await client.PutAsync(endpoint, httpContent);
+        public async Task<HttpResponseMessage> UpdateAsync(string endpoint, object convertJson, HttpClient client)
+        {
+            var json = CreateJsonContent(convertJson);
 
-        public async Task<HttpResponseMessage> PostAsync(string endpoint, HttpContent httpContent, HttpClient client) =>
-            await client.PostAsync(endpoint, httpContent);
+            return await client.PutAsync(endpoint, json);
+        }
+
+        public async Task<HttpResponseMessage> PostAsync(string endpoint, object convertJson, HttpClient client)
+        {
+            var json = CreateJsonContent(convertJson);
+            return await client.PostAsync(endpoint, json);
+        }
 
         public async Task<HttpResponseMessage> DeleteByPostAsync(string endpoint, HttpContent httpContent) =>
             await _client.PostAsync(endpoint, httpContent);
@@ -90,6 +99,34 @@ namespace Survey.xIntegrationTests.Fixtures
         public async ValueTask DisposeAsync()
         {
             _client.Dispose();
+        }
+
+        public async Task AuthenticateUser(HttpClient client)
+        {
+            var token = await GetToken(client);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        }
+
+        public async Task<CompanyDto> CreateCompany(HttpClient client)
+        {
+            var endpoint = new CompanyClients();
+
+            var companyInfo = new CompanyEditDto()
+            {
+                CompanyName = "EdinsCompany",
+                Email = "test@test",
+                Address = "testAddress No.1",
+            };
+
+            var response = await PostAsync(endpoint.GetOrCreateCompany, companyInfo, client);
+            var company = JsonConvert.DeserializeObject<CompanyDto>(await response.Content.ReadAsStringAsync());
+
+            if (company == null)
+            {
+                return null;
+            }
+
+            return company;
         }
     }
 }

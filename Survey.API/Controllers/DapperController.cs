@@ -18,10 +18,10 @@
 
         [Authorize(Roles = "Admin, SuperAdmin", Policy = "IsAnonymousUser")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CompanyBasicInfoDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<CompanyDto>>> GetAll()
         {
             var company = await _companyService.GetAllAsync(UserInfo.role, UserInfo.userId);
-            return Ok(_mapper.Map<List<CompanyBasicInfoDto>>(company));
+            return Ok(_mapper.Map<List<CompanyDto>>(company));
         }
 
         [Authorize(Roles = "Admin, SuperAdmin", Policy = "IsAnonymousUser")]
@@ -29,7 +29,7 @@
         public async Task<IActionResult> Get(int id)
         {
             var company = await _companyService.GetById(id, UserInfo.role, UserInfo.userId);
-            return Ok(_mapper.Map<CompanyBasicInfoDto>(company));
+            return Ok(_mapper.Map<CompanyDto>(company));
         }
 
         [Authorize(Roles = "Admin, SuperAdmin", Policy = "IsAnonymousUser")]
@@ -37,7 +37,7 @@
         public async Task<IActionResult> PostAsync([FromBody] List<DapperCompanyCreationDto> companyInfo)
         {
             var company = await _companyService.UpdateDapper(companyInfo, UserInfo.role, UserInfo.userId);
-            return Ok(_mapper.Map<CompanyBasicInfoDto>(company));
+            return Ok(_mapper.Map<CompanyDto>(company));
         }
     }
 }

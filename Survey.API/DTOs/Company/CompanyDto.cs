@@ -1,7 +1,7 @@
 ﻿namespace Survey.API.DTOs.Company
 {
 
-    public class CompanyBasicInfoDto
+    public class CompanyDto
     {
         public string UserID { get; set; }
 

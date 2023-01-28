@@ -22,10 +22,10 @@
         /// <returns></returns>
         [Authorize(Roles = "Admin, SuperAdmin", Policy = "IsAnonymousUser")]
         [HttpGet]
-        public ActionResult<IEnumerable<CompanyBasicInfoDto>> GetAll()
+        public ActionResult<IEnumerable<CompanyDto>> GetAll()
         {
             var companiesSuperAdmin = _companyService.GetAll(UserInfo.userId, UserInfo.userId);
-            return Ok(_mapper.Map<List<CompanyBasicInfoDto>>(companiesSuperAdmin));
+            return Ok(_mapper.Map<List<CompanyDto>>(companiesSuperAdmin));
         }
 
         /// <summary>
@@ -38,7 +38,7 @@
         public IActionResult Get(int companyId)
         {
             var company1 = _companyService.GetById(companyId, UserInfo.userId, UserInfo.userId);
-            return Ok(_mapper.Map<CompanyBasicInfoDto>(company1));
+            return Ok(_mapper.Map<CompanyDto>(company1));
         }
 
         /// <summary>
@@ -48,11 +48,11 @@
         /// <returns></returns>
         [Authorize(Roles = "Admin, SuperAdmin", Policy = "IsAnonymousUser")]
         [HttpPost]
-        public async Task<IActionResult> PostAsync([FromBody] CompanyCreationDto companyInfo)
+        public async Task<IActionResult> PostAsync([FromBody] CompanyEditDto companyInfo)
         {
             var mapped = _mapper.Map<Company>(companyInfo);
             var company = await _companyService.CreateAsync(mapped, UserInfo.userId, UserInfo.userId);
-            return Ok(_mapper.Map<CompanyBasicInfoDto>(company));
+            return Ok(_mapper.Map<CompanyDto>(company));
         }
 
         /// <summary>
@@ -63,11 +63,11 @@
         /// <returns></returns>
         [Authorize(Roles = "Admin, SuperAdmin", Policy = "IsAnonymousUser")]
         [HttpPut("{companyId}")]
-        public async Task<IActionResult> PutAsync(int companyId, [FromBody] CompanyCreationDto companyInfo)
+        public async Task<IActionResult> PutAsync(int companyId, [FromBody] CompanyEditDto companyInfo)
         {
             var mapped = _mapper.Map<Company>(companyInfo);
             var company1 = await _companyService.UpdateAsync(mapped, UserInfo.role, companyId, UserInfo.userId);
-            return Ok(_mapper.Map<CompanyBasicInfoDto>(company1));
+            return Ok(_mapper.Map<CompanyDto>(company1));
         }
 
         /// <summary>
