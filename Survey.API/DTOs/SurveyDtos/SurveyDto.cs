@@ -1,8 +1,6 @@
 ﻿namespace Survey.API.DTOs.SurveyDtos
 {
-    using Survey.API.DTOs.SurveyReportDtos;
-
-    public class SurveyBasicInfoDto
+    public class SurveyDto
     {
         public int SurveyID { get; set; }
 
@@ -16,7 +14,7 @@
 
         public string SurveyName { get; set; }
 
-        // Eager loading was solved with displaying the data inside it's dtos
+        [Newtonsoft.Json.JsonIgnore]
         public IEnumerable<SurveyReportBasicInfoDto>? SurveyReport { get; set; }
     }
 }

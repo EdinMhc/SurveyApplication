@@ -3,10 +3,10 @@
     public class SurveyClients
     {
         public string GetPutDeletePostSurvey;
-        public string GetAllOrCreateSurvey;
+        public string CreateOrGetAllSurvey;
         public SurveyClients(int companyId)
         {
-            GetAllOrCreateSurvey = $"api/{companyId}/surveys/";
+            CreateOrGetAllSurvey = $"api/{companyId}/surveys/";
         }
 
         public SurveyClients(int companyId, int surveyId)

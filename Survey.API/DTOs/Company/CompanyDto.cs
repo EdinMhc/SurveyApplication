@@ -15,6 +15,6 @@
 
         public DateTime? CreateDate { get; set; }
 
-        public virtual IEnumerable<SurveyBasicInfoDto>? Surveys { get; set; }
+        public virtual IEnumerable<SurveyDto>? Surveys { get; set; }
     }
 }

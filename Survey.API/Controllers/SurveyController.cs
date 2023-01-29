@@ -2,6 +2,7 @@
 {
 
     [Authorize]
+    [Produces("application/json")]
     [ApiController]
     [Route("api/{companyId}/surveys")]
     public class SurveyController : BaseController<SurveyController>
@@ -24,10 +25,10 @@
         /// <returns></returns>
         [Authorize(Roles = "Admin, SuperAdmin", Policy = "IsAnonymousUser")]
         [HttpGet]
-        public ActionResult<IEnumerable<SurveyBasicInfoDto>> GetAll(int companyId)
+        public ActionResult<IEnumerable<SurveyDto>> GetAll(int companyId)
         {
             var surveys = _surveyService.GetAll(companyId, UserInfo.role, UserInfo.userId);
-            return Ok(_mapper.Map<List<SurveyBasicInfoDto>>(surveys));
+            return Ok(_mapper.Map<List<SurveyDto>>(surveys));
         }
 
         /// <summary>
@@ -41,7 +42,7 @@
         public IActionResult Get(int surveyId, int companyId)
         {
             var surveys = _surveyService.GetById(surveyId, companyId, UserInfo.role, UserInfo.userId);
-            return Ok(_mapper.Map<SurveyBasicInfoDto>(surveys));
+            return Ok(_mapper.Map<SurveyDto>(surveys));
         }
 
         /// <summary>
@@ -52,11 +53,11 @@
         /// <returns></returns>
         [Authorize(Roles = "Admin, SuperAdmin", Policy = "IsAnonymousUser")]
         [HttpPost]
-        public async Task<IActionResult> PostAsync(int companyId, [FromBody] SurveyForCreationDto surveyInfo)
+        public async Task<IActionResult> PostAsync(int companyId, [FromBody] SurveyCreationDto surveyInfo)
         {
             var mapped = _mapper.Map<Surveys>(surveyInfo);
             var survey = await _surveyService.CreateAsync(mapped, companyId, UserInfo.role, UserInfo.userId);
-            return Ok(_mapper.Map<SurveyBasicInfoDto>(survey));
+            return Ok(_mapper.Map<SurveyDto>(survey));
         }
 
         /// <summary>
@@ -85,7 +86,7 @@
         {
             var mapped = _mapper.Map<Surveys>(surveyInfo);
             var survey = await _surveyService.UpdateAsync(mapped, surveyId, companyId, UserInfo.role, UserInfo.userId);
-            return Ok(_mapper.Map<SurveyBasicInfoDto>(survey));
+            return Ok(_mapper.Map<SurveyDto>(survey));
         }
     }
 }

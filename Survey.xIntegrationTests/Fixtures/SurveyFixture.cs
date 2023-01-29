@@ -18,7 +18,7 @@ namespace Survey.xIntegrationTests.Fixtures
                 Address = "testAddress No.1",
             };
 
-            var response = await PostAsync(endpoint.GetOrCreateCompany, companyInfo, _client);
+            var response = await PostAsync(endpoint.GetAllOrCreateCompany, companyInfo, _client);
             var company = JsonConvert.DeserializeObject<CompanyDto>(await response.Content.ReadAsStringAsync());
 
             return company.CompanyId;

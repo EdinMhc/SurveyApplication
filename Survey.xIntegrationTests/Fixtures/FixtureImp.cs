@@ -1,5 +1,4 @@
 ﻿using Survey.API.DTOs.Company;
-using Survey.xIntegrationTests.Clients;
 using System.Net.Http.Headers;
 using System.Text;
 
@@ -11,6 +10,7 @@ namespace Survey.xIntegrationTests.Fixtures
         public HttpClient _client;
         public string Email;
         public string Password = "12345678";
+        public string SecondUserEmail = "test@test.com";
 
         public FixtureImp(WebApplicationFactory<Program> factory)
         {
@@ -32,7 +32,7 @@ namespace Survey.xIntegrationTests.Fixtures
             var bodyRegistration = CreateJsonContent(requestDto);
             await _client.PostAsync(identityEndpoints.Register, bodyRegistration);
 
-            return new UserScope(this, requestDto.Email, role);
+            return new UserScope(this, requestDto.Email);
         }
 
         public async Task<string> GetToken(HttpClient client)
@@ -89,9 +89,9 @@ namespace Survey.xIntegrationTests.Fixtures
         public async Task<HttpResponseMessage> GetAllAsync(string endpoint, HttpClient client) =>
             await client.GetAsync(endpoint);
 
-        public async ValueTask DeleteUserAsync(string email, Role role)
+        public async ValueTask DeleteUserAsync(string email)
         {
-            var identityEndpoints = new IdentityClients(role);
+            var identityEndpoints = new IdentityClients();
             var body = CreateJsonContent(email);
             await DeleteByPostAsync(identityEndpoints.Delete, body);
         }
@@ -118,7 +118,7 @@ namespace Survey.xIntegrationTests.Fixtures
                 Address = "testAddress No.1",
             };
 
-            var response = await PostAsync(endpoint.GetOrCreateCompany, companyInfo, client);
+            var response = await PostAsync(endpoint.GetAllOrCreateCompany, companyInfo, client);
             var company = JsonConvert.DeserializeObject<CompanyDto>(await response.Content.ReadAsStringAsync());
 
             if (company == null)
@@ -127,6 +127,40 @@ namespace Survey.xIntegrationTests.Fixtures
             }
 
             return company;
+        }
+
+        public async Task<HttpClient> CreateAndAuthorizeSecondUser()
+        {
+            var factory = new WebApplicationFactory<Program>();
+            var secondClient = factory.CreateClient();
+            var identityEndpoints = new IdentityClients(Role.Admin);
+            var requestDto = new UserRegistrationRequestDto
+            {
+                Email = "test@test.com",
+                FirstName = "Test",
+                LastName = "User",
+                Password = "12345678"
+            };
+
+            var bodyRegistration = CreateJsonContent(requestDto);
+            await secondClient.PostAsync(identityEndpoints.Register, bodyRegistration);
+
+            UserLoginRequest loggedInInfo = new()
+            {
+                Email = "test@test.com",
+                Password = "12345678",
+            };
+
+            IdentityClients endpoint = new();
+
+            var httpContent = CreateJsonContent(loggedInInfo);
+            var response = await secondClient.PostAsync(endpoint.Login, httpContent);
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            var token = JsonConvert.DeserializeObject<AuthSuccessResponse>(responseString);
+            secondClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Token);
+
+            return secondClient;
         }
     }
 }

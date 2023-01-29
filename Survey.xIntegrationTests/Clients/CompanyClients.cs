@@ -2,17 +2,21 @@
 {
     public class CompanyClients
     {
-        public string GetOrCreateCompany { get; set; }
-        public string CrudOperations { get; }
+        public string GetAllOrCreateCompany { get; set; }
+        public string DeleteUpdateGetCompany { get; }
 
+        /// <summary>
+        /// Target specific company
+        /// </summary>
+        /// <param name="companyId"></param>
         public CompanyClients(int companyId)
         {
-            CrudOperations = $"api/companies/{companyId}/";
+            DeleteUpdateGetCompany = $"api/companies/{companyId}/";
         }
 
         public CompanyClients()
         {
-            GetOrCreateCompany = "api/companies/";
+            GetAllOrCreateCompany = "api/companies/";
         }
     }
 }

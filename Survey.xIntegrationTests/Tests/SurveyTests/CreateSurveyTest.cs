@@ -17,14 +17,14 @@ namespace Survey.xIntegrationTests.Tests.SurveyTests
 
                 var surveyEndpoint = new SurveyClients(companyId);
 
-                var createdSurvey = new SurveyForCreationDto()
+                var createdSurvey = new SurveyCreationDto()
                 {
                     SurveyName = "TestSurveyName",
                     IsActive = true,
                 };
 
-                var surveyResponse = await PostAsync(surveyEndpoint.GetAllOrCreateSurvey, createdSurvey, _client);
-                var survey = JsonConvert.DeserializeObject<SurveyBasicInfoDto>(await surveyResponse.Content.ReadAsStringAsync());
+                var surveyResponse = await PostAsync(surveyEndpoint.CreateOrGetAllSurvey, createdSurvey, _client);
+                var survey = JsonConvert.DeserializeObject<SurveyDto>(await surveyResponse.Content.ReadAsStringAsync());
 
                 Assert.Multiple(() =>
                 {
@@ -45,14 +45,14 @@ namespace Survey.xIntegrationTests.Tests.SurveyTests
 
                 var surveyEndpoint = new SurveyClients(companyId);
 
-                var createdSurvey = new SurveyForCreationDto()
+                var createdSurvey = new SurveyCreationDto()
                 {
                     SurveyName = "a",
                     IsActive = true,
                 };
 
-                var surveyResponse = await PostAsync(surveyEndpoint.GetAllOrCreateSurvey, createdSurvey, _client);
-                var survey = JsonConvert.DeserializeObject<SurveyBasicInfoDto>(await surveyResponse.Content.ReadAsStringAsync());
+                var surveyResponse = await PostAsync(surveyEndpoint.CreateOrGetAllSurvey, createdSurvey, _client);
+                var survey = JsonConvert.DeserializeObject<SurveyDto>(await surveyResponse.Content.ReadAsStringAsync());
 
                 Assert.Multiple(() =>
                 {

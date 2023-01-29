@@ -24,7 +24,7 @@
         [HttpGet]
         public ActionResult<IEnumerable<CompanyDto>> GetAll()
         {
-            var companiesSuperAdmin = _companyService.GetAll(UserInfo.userId, UserInfo.userId);
+            var companiesSuperAdmin = _companyService.GetAll(UserInfo.role, UserInfo.userId);
             return Ok(_mapper.Map<List<CompanyDto>>(companiesSuperAdmin));
         }
 
@@ -37,7 +37,7 @@
         [HttpGet("{companyId}")]
         public IActionResult Get(int companyId)
         {
-            var company1 = _companyService.GetById(companyId, UserInfo.userId, UserInfo.userId);
+            var company1 = _companyService.GetById(companyId, UserInfo.role, UserInfo.userId);
             return Ok(_mapper.Map<CompanyDto>(company1));
         }
 
@@ -51,7 +51,7 @@
         public async Task<IActionResult> PostAsync([FromBody] CompanyEditDto companyInfo)
         {
             var mapped = _mapper.Map<Company>(companyInfo);
-            var company = await _companyService.CreateAsync(mapped, UserInfo.userId, UserInfo.userId);
+            var company = await _companyService.CreateAsync(mapped, UserInfo.role, UserInfo.userId);
             return Ok(_mapper.Map<CompanyDto>(company));
         }
 
@@ -79,7 +79,7 @@
         [HttpDelete("{companyId}")]
         public async Task<IActionResult> Delete(int companyId)
         {
-            return Ok(await _companyService.DeleteAsync(companyId, UserInfo.userId, UserInfo.userId));
+            return Ok(await _companyService.DeleteAsync(companyId, UserInfo.role, UserInfo.userId));
         }
     }
 }

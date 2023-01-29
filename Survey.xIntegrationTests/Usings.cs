@@ -1,7 +1,9 @@
 global using Microsoft.AspNetCore.Mvc.Testing;
 global using Newtonsoft.Json;
+global using Survey.API.DTOs.SurveyDtos;
 global using Survey.Domain.Services.IdentityService.Requests;
 global using Survey.Domain.Services.IdentityService.Responses;
+global using Survey.xIntegrationTests.Clients;
 global using Survey.xIntegrationTests.Fixtures;
 global using System.Net;
 global using Xunit;
