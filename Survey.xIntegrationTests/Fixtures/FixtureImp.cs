@@ -1,4 +1,5 @@
-﻿using Survey.API.DTOs.Company;
+﻿using Survey.API.DTOs.AnwserBlockDtos;
+using Survey.API.DTOs.Company;
 using System.Net.Http.Headers;
 using System.Text;
 
@@ -129,6 +130,45 @@ namespace Survey.xIntegrationTests.Fixtures
             return company;
         }
 
+        public async Task<SurveyDto> CreateSurvey(HttpClient client, int companyId)
+        {
+            var surveyEndpoint = new SurveyClients(companyId);
+
+            var createdSurvey = new SurveyCreationDto()
+            {
+                SurveyName = "TestSurveyName",
+                IsActive = true,
+            };
+
+            var surveyResponse = await PostAsync(surveyEndpoint.CreateOrGetAllSurvey, createdSurvey, client);
+            var survey = JsonConvert.DeserializeObject<SurveyDto>(await surveyResponse.Content.ReadAsStringAsync());
+
+            if (survey == null)
+                return null;
+            else
+                return survey;
+        }
+
+        public async Task<AnwserBlockBasicInfoDto> CreateAnswerBlock(HttpClient client, int companyId, int surveyId, int answerBlockId = 0)
+        {
+            var answerBlock = new AnwserBlockForCreationDto()
+            {
+                AnwserBlockName = "WebStorage",
+                CodeOfAnwserBlock = 1,
+                BlockType = "Texts"
+            };
+            var answerBlockEndpoints = new AnswerBlockClients(companyId, surveyId, answerBlockId);
+
+            var answerBlockResponse = await PostAsync(answerBlockEndpoints.GetAllOrPostAnswerBlock, answerBlock, client);
+            var answerBlockCreated = JsonConvert.DeserializeObject<AnwserBlockBasicInfoDto>(await answerBlockResponse.Content.ReadAsStringAsync());
+
+            if (answerBlockCreated == null)
+            {
+                return null;
+            }
+
+            return answerBlockCreated;
+        }
         public async Task<HttpClient> CreateAndAuthorizeSecondUser()
         {
             var factory = new WebApplicationFactory<Program>();
