@@ -1,14 +1,8 @@
-﻿namespace Survey.Infrastructure.DapperRepository
+﻿using Survey.Infrastructure.DapperRepository.StoredProcedure;
+using Survey.Infrastructure.DapperRepository.StoredProcedure.DapperDto;
+
+namespace Survey.Infrastructure.DapperRepository
 {
-    using Dapper;
-    using Microsoft.Data.SqlClient;
-    using Microsoft.Extensions.Configuration;
-    using Survey.Infrastructure.DapperRepository.StoredProcedure;
-    using Survey.Infrastructure.DapperRepository.StoredProcedure.DapperDto;
-    using System.ComponentModel;
-    using System.Data;
-    using System.Reflection;
-    using System.Text;
 
     public class GenericRepository<T> : IGenericRepository<T>
         where T : class

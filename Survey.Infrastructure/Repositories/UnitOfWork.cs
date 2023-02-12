@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Survey.Infrastructure.DapperRepository;
+﻿using Survey.Infrastructure.DapperRepository;
 using Survey.Infrastructure.Entities;
 
 namespace Survey.Infrastructure.Repositories
