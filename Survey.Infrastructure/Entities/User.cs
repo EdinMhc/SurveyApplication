@@ -1,4 +1,6 @@
-﻿namespace Survey.Infrastructure.Entities
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace Survey.Infrastructure.Entities
 {
 
     public class User : IdentityUser

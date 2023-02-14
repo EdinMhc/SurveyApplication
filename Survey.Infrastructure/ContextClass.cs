@@ -1,4 +1,6 @@
-﻿using Survey.Infrastructure.Configurations;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using Survey.Infrastructure.Configurations;
 using Survey.Infrastructure.Entities;
 using Survey.Infrastructure.Entities.JwtRelated;
 

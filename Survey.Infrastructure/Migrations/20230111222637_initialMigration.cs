@@ -1,5 +1,7 @@
 ﻿#nullable disable
 
+using Microsoft.EntityFrameworkCore.Migrations;
+
 namespace Survey.Infrastructure.Migrations
 {
     public partial class initialMigration : Migration
