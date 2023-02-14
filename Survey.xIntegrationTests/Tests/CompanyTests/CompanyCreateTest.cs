@@ -5,9 +5,9 @@ namespace Survey.xIntegrationTests.Tests.CompanyTest
     public class CompanyTestsCollection : ICollectionFixture<WebApplicationFactory<Program>> { }
 
     [Collection("CompanyTestsCollection")]
-    public class CreateCompanyTest : FixtureImp
+    public class CompanyCreateTest : FixtureImp
     {
-        public CreateCompanyTest(WebApplicationFactory<Program> factory) : base(factory)
+        public CompanyCreateTest(WebApplicationFactory<Program> factory) : base(factory)
         {
         }
 

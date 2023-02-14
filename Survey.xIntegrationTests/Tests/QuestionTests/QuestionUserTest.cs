@@ -2,12 +2,12 @@
 
 namespace Survey.xIntegrationTests.Tests.QuestionTests
 {
-    public class CreateQuestionTest : QuestionFixture
+    public class QuestionUserTest : QuestionFixture
     {
-        public CreateQuestionTest(WebApplicationFactory<Program> factory) : base(factory) { }
+        public QuestionUserTest(WebApplicationFactory<Program> factory) : base(factory) { }
 
         [Fact]
-        public async Task PostQuestion_ShouldReturnOk()
+        public async Task UpdateQuestion_ShouldReturnOk()
         {
             await using (var scope = await CreateUserScope(Role.Admin))
             {
@@ -25,20 +25,26 @@ namespace Survey.xIntegrationTests.Tests.QuestionTests
                 {
                     AnwserBlockID = answerBlock.AnwserBlockID,
                     Code = Guid.NewGuid().ToString(),
-                    QuestionText = "What is your question again?",
+                    QuestionText = "Extraordinary question?",
                     QuestionType = "Text",
                 };
 
                 var questionResponse = await PostAsync(questionEndpoint.GetAllAndPost, question, _client);
                 var createdQuestion = JsonConvert.DeserializeObject<QuestionBasicInfoDto>(await questionResponse.Content.ReadAsStringAsync());
 
+                var getQuestionEndpoint = new QuestionClients(company.CompanyId, survey.SurveyID, createdQuestion.QuestionID);
+
+                HttpClient secondClient = await CreateAndAuthorizeSecondUser();
+
+                var getAllResponseSecondUser = await GetAllAsync(getQuestionEndpoint.GetAllAndPost, secondClient);
+                var errorMessage = await getAllResponseSecondUser.Content.ReadAsStringAsync();
+
+                await DeleteUserAsync("test@test.com");
+
                 Assert.Multiple(() =>
                 {
-                    Assert.Equal(HttpStatusCode.OK, questionResponse.StatusCode);
-                    Assert.Equal(question.QuestionType, createdQuestion.QuestionType);
-                    Assert.Equal(question.QuestionText, createdQuestion.QuestionText);
-                    Assert.Equal(question.Code, createdQuestion.Code);
-                    Assert.NotNull(createdQuestion);
+                    Assert.Contains("No results for search. User is a mismatch or Company does not exist", errorMessage);
+                    Assert.Equal(HttpStatusCode.BadRequest, getAllResponseSecondUser.StatusCode);
                 });
             }
         }

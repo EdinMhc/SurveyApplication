@@ -3,9 +3,9 @@ using Survey.xIntegrationTests.Clients;
 
 namespace Survey.xIntegrationTests.Tests.SurveyTests
 {
-    public class CreateSurveyTest : SurveyFixture
+    public class SurveyCreateTest : SurveyFixture
     {
-        public CreateSurveyTest(WebApplicationFactory<Program> factory) : base(factory) { }
+        public SurveyCreateTest(WebApplicationFactory<Program> factory) : base(factory) { }
 
         [Fact]
         public async Task PostSurvey_ShouldReturnCreatedSurvey()

@@ -2,9 +2,9 @@
 
 namespace Survey.xIntegrationTests.Tests.CompanyTests
 {
-    public class RoleCompanyTest : FixtureImp
+    public class CompanyUserTest : FixtureImp
     {
-        public RoleCompanyTest(WebApplicationFactory<Program> factory) : base(factory) { }
+        public CompanyUserTest(WebApplicationFactory<Program> factory) : base(factory) { }
 
         [Fact]
         public async Task Get_WhenCalledWithOtherUser_ReturnsBadRequest()

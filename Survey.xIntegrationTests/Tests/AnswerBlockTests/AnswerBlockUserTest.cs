@@ -2,9 +2,9 @@
 
 namespace Survey.xIntegrationTests.Tests.AnswerBlockTests
 {
-    public class AnswerBlockTest : AnswerBlockFixture
+    public class AnswerBlockUserTest : AnswerBlockFixture
     {
-        public AnswerBlockTest(WebApplicationFactory<Program> factory) : base(factory) { }
+        public AnswerBlockUserTest(WebApplicationFactory<Program> factory) : base(factory) { }
 
         [Fact]
         public async Task PostAnswerBlock_ShouldReturnOk()
@@ -29,12 +29,18 @@ namespace Survey.xIntegrationTests.Tests.AnswerBlockTests
                 var answerBlockResponse = await PostAsync(answerBlockEndpoints.GetAllOrPostAnswerBlock, answerBlock, _client);
                 var answerBlockCreated = JsonConvert.DeserializeObject<AnwserBlockBasicInfoDto>(await answerBlockResponse.Content.ReadAsStringAsync());
 
+                // Second user can not access second users answer block
+                HttpClient secondClient = await CreateAndAuthorizeSecondUser();
+
+                var getAllResponseSecondUser = await GetAllAsync(answerBlockEndpoints.GetAllOrPostAnswerBlock, secondClient);
+                var errorMessage = await getAllResponseSecondUser.Content.ReadAsStringAsync();
+
+                await DeleteUserAsync("test@test.com");
+                string expected = "No results for search. User is a mismatch or Company does not exist";
+
                 Assert.Multiple(() =>
                 {
-                    Assert.Equal(HttpStatusCode.OK, answerBlockResponse.StatusCode);
-                    Assert.Equal(answerBlock.AnwserBlockName, answerBlockCreated.AnwserBlockName);
-                    Assert.Equal(answerBlock.CodeOfAnwserBlock, answerBlockCreated.CodeOfAnwserBlock);
-                    Assert.Equal(answerBlock.BlockType, answerBlockCreated.BlockType);
+                    Assert.Contains(expected, errorMessage);
                 });
             }
         }

@@ -1,12 +1,9 @@
-﻿using Survey.API.DTOs.SurveyDtos;
-using Survey.xIntegrationTests.Clients;
-
-namespace Survey.xIntegrationTests.Tests.SurveyTests
+﻿namespace Survey.xIntegrationTests.Tests.SurveyTests
 {
-    public class UpdateSurveyTest : SurveyFixture
+    public class SurveyUpdateTest : SurveyFixture
     {
 
-        public UpdateSurveyTest(WebApplicationFactory<Program> factory) : base(factory) { }
+        public SurveyUpdateTest(WebApplicationFactory<Program> factory) : base(factory) { }
 
         [Fact]
         public async Task PutSurvey_ShouldReturnUpdatedSurvey()

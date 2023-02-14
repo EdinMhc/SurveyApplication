@@ -2,9 +2,9 @@
 
 namespace Survey.xIntegrationTests.Tests.CompanyTests
 {
-    public class UpdateCompanyTest : FixtureImp
+    public class CompanyUpdateTest : FixtureImp
     {
-        public UpdateCompanyTest(WebApplicationFactory<Program> factory) : base(factory) { }
+        public CompanyUpdateTest(WebApplicationFactory<Program> factory) : base(factory) { }
 
         [Fact]
         public async Task UpdateCompany_WhenCalledWithValidData_ReturnsOk()

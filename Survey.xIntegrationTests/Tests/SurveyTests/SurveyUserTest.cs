@@ -1,8 +1,8 @@
 ﻿namespace Survey.xIntegrationTests.Tests.SurveyTests
 {
-    public class RoleSurveyTest : SurveyFixture
+    public class SurveyUserTest : SurveyFixture
     {
-        public RoleSurveyTest(WebApplicationFactory<Program> factory) : base(factory) { }
+        public SurveyUserTest(WebApplicationFactory<Program> factory) : base(factory) { }
 
         [Fact]
         public async Task GetAllSurveys_ShouldReturnTwoSurveys()
