@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Survey.Infrastructure.Entities;
+﻿using Survey.Infrastructure.Entities;
 
 namespace Survey.Infrastructure.Configurations
 {

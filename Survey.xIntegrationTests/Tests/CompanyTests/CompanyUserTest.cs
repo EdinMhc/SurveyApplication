@@ -1,6 +1,6 @@
 ﻿using Survey.API.DTOs.Company;
 
-namespace Survey.xIntegrationTests.Tests.CompanyTests
+namespace Survey.xIntegrationTests.Tests.CompanyTest
 {
     public class CompanyUserTest : FixtureImp
     {

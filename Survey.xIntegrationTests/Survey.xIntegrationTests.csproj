@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Survey.API\Survey.API.csproj" />
+    <ProjectReference Include="..\Survey.Domain\Survey.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
