@@ -7,7 +7,7 @@ namespace Survey.xIntegrationTests.Tests.AnswerBlockTests
         public AnswerBlockUserTest(WebApplicationFactory<Program> factory) : base(factory) { }
 
         [Fact]
-        public async Task PostAnswerBlock_ShouldReturnOk()
+        public async Task DifferentUsers_UseAnswerBlock_ShouldReturnOk()
         {
             await using (var scope = await CreateUserScope(Role.Admin))
             {

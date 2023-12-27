@@ -31,7 +31,7 @@ namespace Survey.xIntegrationTests.Tests.QuestionTests
                     QuestionType = "Text",
                 };
 
-                var questionResponse = await PostAsync(questionEndpoint.GetAllAndPost, question, _client);
+                var questionResponse = await PostAsync(questionEndpoint.GetAllOrPost, question, _client);
                 var createdQuestion = JsonConvert.DeserializeObject<QuestionBasicInfoDto>(await questionResponse.Content.ReadAsStringAsync());
 
                 var getQuestionEndpoint = new QuestionClients(company.CompanyId, survey.SurveyID, createdQuestion.QuestionID);
@@ -74,25 +74,25 @@ namespace Survey.xIntegrationTests.Tests.QuestionTests
                     QuestionType = "Text",
                 };
 
-                var firstQuestionResponse = await PostAsync(questionEndpoint.GetAllAndPost, question, _client);
+                var firstQuestionResponse = await PostAsync(questionEndpoint.GetAllOrPost, question, _client);
                 var firstErrorMessage = await firstQuestionResponse.Content.ReadAsStringAsync();
 
                 await NormalizeQuestion(ref question, answerBlock.AnwserBlockID);
                 question.Code = "x";
 
-                var secondQuestionResponse = await PostAsync(questionEndpoint.GetAllAndPost, question, _client);
+                var secondQuestionResponse = await PostAsync(questionEndpoint.GetAllOrPost, question, _client);
                 var secondErrorMessage = await secondQuestionResponse.Content.ReadAsStringAsync();
 
                 await NormalizeQuestion(ref question, answerBlock.AnwserBlockID);
                 question.QuestionText = "x";
 
-                var thirdQuestionResponse = await PostAsync(questionEndpoint.GetAllAndPost, question, _client);
+                var thirdQuestionResponse = await PostAsync(questionEndpoint.GetAllOrPost, question, _client);
                 var thirdErrorMessage = await thirdQuestionResponse.Content.ReadAsStringAsync();
 
                 await NormalizeQuestion(ref question, answerBlock.AnwserBlockID);
                 question.QuestionType = "x";
 
-                var fourthQuestionResponse = await PostAsync(questionEndpoint.GetAllAndPost, question, _client);
+                var fourthQuestionResponse = await PostAsync(questionEndpoint.GetAllOrPost, question, _client);
                 var fourthErrorMessage = await fourthQuestionResponse.Content.ReadAsStringAsync();
 
                 Assert.Multiple(() =>

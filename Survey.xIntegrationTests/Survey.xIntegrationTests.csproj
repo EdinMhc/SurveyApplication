@@ -28,7 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Tests\AnswerTests\" />
     <Folder Include="Tests\SurveyReportData\" />
     <Folder Include="Tests\SurveyReport\" />
   </ItemGroup>

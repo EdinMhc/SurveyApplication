@@ -29,7 +29,7 @@ namespace Survey.xIntegrationTests.Tests.QuestionTests
                     QuestionType = "Text",
                 };
 
-                var questionResponse = await PostAsync(questionEndpoint.GetAllAndPost, question, _client);
+                var questionResponse = await PostAsync(questionEndpoint.GetAllOrPost, question, _client);
                 var createdQuestion = JsonConvert.DeserializeObject<QuestionBasicInfoDto>(await questionResponse.Content.ReadAsStringAsync());
 
                 var getQuestionEndpoint = new QuestionClients(company.CompanyId, survey.SurveyID, createdQuestion.QuestionID);

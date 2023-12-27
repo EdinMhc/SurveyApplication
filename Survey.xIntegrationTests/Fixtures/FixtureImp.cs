@@ -1,5 +1,7 @@
 ﻿using Survey.API.DTOs.AnwserBlockDtos;
+using Survey.API.DTOs.AnwserDtos;
 using Survey.API.DTOs.Company;
+using Survey.API.DTOs.QuestionDtos;
 using System.Net.Http.Headers;
 using System.Text;
 
@@ -169,6 +171,41 @@ namespace Survey.xIntegrationTests.Fixtures
 
             return answerBlockCreated;
         }
+
+        public async Task<QuestionBasicInfoDto> CreateQuestionAsync(HttpClient client, int companyId, int surveyId, int answerBlockId)
+        {
+            var questionEndpoint = new QuestionClients(companyId, surveyId);
+
+            var question = new QuestionForCreationDto()
+            {
+                AnwserBlockID = answerBlockId,
+                Code = Guid.NewGuid().ToString(),
+                QuestionText = "Extraordinary question?",
+                QuestionType = "Text",
+            };
+
+            var questionResponse = await PostAsync(questionEndpoint.GetAllOrPost, question, client);
+            var createdQuestion = JsonConvert.DeserializeObject<QuestionBasicInfoDto>(await questionResponse.Content.ReadAsStringAsync());
+
+            if (createdQuestion == null) { return null; }
+            return createdQuestion;
+        }
+
+        public async Task<AnswerBasicInfoDto> CreateAnswer(HttpClient client, int companyId, int answerBlockId)
+        {
+            var answerEndpoints = new AnswerClients(companyId, answerBlockId);
+
+            var answer = new AnswerForCreationDto()
+            {
+                AnwserText = "CreativeAnswerToQuestion",
+            };
+
+            var answerResponse = await PostAsync(answerEndpoints.PostGetAll, answer, client);
+            var answerCreated = JsonConvert.DeserializeObject<AnswerBasicInfoDto>(await answerResponse.Content.ReadAsStringAsync());
+            if (answerCreated == null) return null;
+            return answerCreated;
+        }
+
         public async Task<HttpClient> CreateAndAuthorizeSecondUser()
         {
             var factory = new WebApplicationFactory<Program>();
